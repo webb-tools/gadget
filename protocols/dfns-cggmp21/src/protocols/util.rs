@@ -76,21 +76,17 @@ impl SignatureVerifier for Secp256k1 {
         data_hash: &[u8; 32],
         public_key_bytes: &[u8],
     ) -> Result<(), JobError> {
-        println!("Public key bytes: {:?}", public_key_bytes);
         let public_key =
             secp256k1::PublicKey::from_slice(public_key_bytes).map_err(|e| JobError {
                 reason: format!("Failed to convert public key to secp256k1: {:?}", e),
             })?;
-        println!("Public key: {:?}", public_key);
         let message = secp256k1::Message::from_slice(data_hash).map_err(|e| JobError {
             reason: format!("Failed to convert data hash to secp256k1: {:?}", e),
         })?;
-        println!("Message: {:?}", message);
         let signature =
             secp256k1::ecdsa::Signature::from_compact(&signature_bytes).map_err(|e| JobError {
                 reason: format!("Failed to convert signature to compact: {:?}", e),
             })?;
-        println!("Signature: {:?}", signature);
         signature
             .verify(&message, &public_key)
             .map_err(|e| JobError {

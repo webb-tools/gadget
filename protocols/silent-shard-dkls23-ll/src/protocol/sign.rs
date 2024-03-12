@@ -178,24 +178,8 @@ pub async fn generate_protocol_from<KBE: KeystoreBackend, C: ClientWithApi, N: N
         .post(async move {
             // Submit the protocol output to the blockchain
             if let Some(signature) = protocol_output_clone.lock().await.take() {
-                // let (signature, data_hash) = convert_ecdsa_signature(
-                //     signature.group_signature.to_bytes().to_vec(),
-                //     &input_data_to_sign2,
-                //     &verifying_key.to_bytes(),
-                // );
                 let data_hash = keccak_256(input_data_to_sign2.as_slice());
                 let signature = signature.group_signature.to_bytes().to_vec();
-                println!("Verifying key: {:?}", verifying_key);
-                let res = VerifyingKey::from_affine(verifying_key)
-                    .map(|vk| {
-                        vk.verify_prehash(&data_hash, &Signature::from_slice(&signature).unwrap())
-                    })
-                    .map_err(|e| JobError {
-                        reason: format!("Failed to verify signature: {e:?}"),
-                    })?;
-                println!("Signature verification result: {:?}", res);
-
-                println!("Signature: {:?}", signature);
                 let job_result = jobs::JobResult::DKGPhaseTwo(jobs::tss::DKGTSSSignatureResult {
                     signature_scheme: jobs::tss::DigitalSignatureScheme::EcdsaSecp256k1,
                     data: BoundedVec(data_hash.to_vec()),
@@ -214,8 +198,6 @@ pub async fn generate_protocol_from<KBE: KeystoreBackend, C: ClientWithApi, N: N
                     .map_err(|err| JobError {
                         reason: format!("Failed to submit job result: {err:?}"),
                     })?;
-            } else {
-                println!("No signature was found");
             }
 
             Ok(())

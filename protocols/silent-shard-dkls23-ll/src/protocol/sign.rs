@@ -7,7 +7,7 @@ use gadget_common::gadget::work_manager::WorkManager;
 use gadget_common::gadget::JobInitMetadata;
 use gadget_common::keystore::KeystoreBackend;
 use gadget_common::prelude::*;
-use gadget_common::tangle_subxt::tangle_runtime::api::runtime_types::bounded_collections::bounded_vec::BoundedVec;
+use gadget_common::tangle_subxt::tangle_testnet_runtime::api::runtime_types::bounded_collections::bounded_vec::BoundedVec;
 use gadget_common::channels;
 use gadget_core::job::{BuiltExecutableJobWrapper, JobBuilder, JobError};
 use gadget_core::job_manager::{ProtocolWorkManager, WorkManagerInterface};
@@ -202,7 +202,7 @@ pub async fn generate_protocol_from<KBE: KeystoreBackend, C: ClientWithApi, N: N
                     signature: BoundedVec(signature.to_vec()),
                     verifying_key: BoundedVec(verifying_key.to_bytes().to_vec()),
                     derivation_path: None,
-                    __ignore: Default::default(),
+                    __subxt_unused_type_params: Default::default(),
                 });
 
                 pallet_tx

@@ -1,0 +1,26 @@
+[package]
+name = "wsts-protocol"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+gadget-common = { workspace = true }
+async-trait = { workspace = true }
+futures = { workspace = true }
+tokio = { workspace = true }
+protocol-macros = { workspace = true }
+parking_lot = { workspace = true }
+sp-core = { workspace = true }
+rand = { workspace = true }
+bincode2 = { workspace = true }
+wsts = { workspace = true }
+serde = { workspace = true }
+itertools = { workspace = true }
+hashbrown = {  version = "0.14.3", features = ["serde"] }
+tangle-primitives = { workspace = true }
+
+[dev-dependencies]
+test-utils = { workspace = true }
+tangle-primitives = { workspace = true }

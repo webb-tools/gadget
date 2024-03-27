@@ -14,8 +14,8 @@ use sp_core::{ecdsa, keccak_256, sr25519};
 use std::sync::Arc;
 use std::time::Duration;
 use tangle_subxt::subxt::utils::AccountId32;
-use tangle_subxt::tangle_runtime::api::runtime_types::tangle_primitives::{jobs, roles};
-use tangle_subxt::tangle_runtime::api::runtime_types::tangle_testnet_runtime::{
+use tangle_subxt::tangle_testnet_runtime::api::runtime_types::tangle_primitives::{jobs, roles};
+use tangle_subxt::tangle_testnet_runtime::api::runtime_types::tangle_testnet_runtime::{
     MaxAdditionalParamsLen, MaxParticipants, MaxSubmissionLen,
 };
 

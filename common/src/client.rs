@@ -9,8 +9,8 @@ use subxt::tx::TxPayload;
 use subxt::utils::AccountId32;
 use subxt::OnlineClient;
 use tangle_subxt::subxt;
-use tangle_subxt::tangle_runtime::api::runtime_types::tangle_primitives::{jobs, roles};
-use tangle_subxt::tangle_runtime::api::runtime_types::tangle_testnet_runtime::{
+use tangle_subxt::tangle_testnet_runtime::api::runtime_types::tangle_primitives::{jobs, roles};
+use tangle_subxt::tangle_testnet_runtime::api::runtime_types::tangle_testnet_runtime::{
     MaxAdditionalParamsLen, MaxDataLen, MaxKeyLen, MaxParticipants, MaxProofLen, MaxSignatureLen,
     MaxSubmissionLen,
 };
@@ -492,7 +492,7 @@ where
             MaxAdditionalParamsLen,
         >,
     ) -> Result<(), crate::Error> {
-        let tx = tangle_subxt::tangle_runtime::api::tx()
+        let tx = tangle_subxt::tangle_testnet_runtime::api::tx()
             .jobs()
             .submit_job_result(role_type, job_id, result);
         match self.submit(&tx).await {
@@ -570,8 +570,8 @@ mod tests {
 
     use tangle_subxt::{
         subxt::{tx::Signer, utils::AccountId32, PolkadotConfig},
-        tangle_runtime::api,
-        tangle_runtime::api::runtime_types::{
+        tangle_testnet_runtime::api,
+        tangle_testnet_runtime::api::runtime_types::{
             bounded_collections::bounded_vec::BoundedVec,
             tangle_primitives::{jobs, roles},
         },
@@ -602,7 +602,7 @@ mod tests {
                 threshold: 1u8,
                 permitted_caller: None,
                 role_type: roles::tss::ThresholdSignatureRoleType::DfnsCGGMP21Secp256k1,
-                __ignore: Default::default(),
+                __subxt_unused_type_params: Default::default(),
             }),
         };
         let tx = api::tx().jobs().submit_job(dkg_phase_one);

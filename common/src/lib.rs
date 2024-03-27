@@ -41,11 +41,15 @@ pub mod prelude {
     pub use std::pin::Pin;
     pub use std::sync::Arc;
     pub use tangle_subxt::subxt::utils::AccountId32;
-    pub use tangle_subxt::tangle_runtime::api::runtime_types::tangle_primitives::{jobs, roles};
-    pub use tangle_subxt::tangle_runtime::api::runtime_types::tangle_testnet_runtime::{
+    // TODO: feature flag to switch between tangle_testnet_runtime and tangle_mainnet_runtime
+    pub use tangle_subxt::tangle_testnet_runtime::api::runtime_types::tangle_primitives::{
+        jobs, roles,
+    };
+    pub use tangle_subxt::tangle_testnet_runtime::api::runtime_types::tangle_testnet_runtime::{
         MaxAdditionalParamsLen, MaxParticipants, MaxSubmissionLen,
     };
 
+    pub use crate::full_protocol::SharedOptional;
     pub use tokio::sync::mpsc::{UnboundedReceiver, UnboundedSender};
 }
 pub mod channels;

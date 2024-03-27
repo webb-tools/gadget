@@ -258,7 +258,7 @@ parameter_types! {
     pub const MaxParticipants: u32 = 10;
     #[derive(Clone, RuntimeDebug, Eq, PartialEq, TypeInfo, Encode, Decode)]
     #[derive(Serialize, Deserialize)]
-    pub const MaxKeyLen: u32 = 256;
+    pub const MaxKeyLen: u32 = 2048;
     #[derive(Clone, RuntimeDebug, Eq, PartialEq, TypeInfo, Encode, Decode)]
     #[derive(Serialize, Deserialize)]
     pub const MaxDataLen: u32 = 256;
@@ -696,10 +696,10 @@ pub mod mock_wrapper_client {
     use gadget_common::config::ClientWithApi;
     use gadget_common::locks::TokioMutexExt;
     use gadget_common::tangle_subxt::subxt::utils::AccountId32;
-    use gadget_common::tangle_subxt::tangle_runtime::api::runtime_types::tangle_primitives::{
+    use gadget_common::tangle_subxt::tangle_testnet_runtime::api::runtime_types::tangle_primitives::{
         jobs, roles,
     };
-    use gadget_common::tangle_subxt::tangle_runtime::api::runtime_types::tangle_testnet_runtime::{
+    use gadget_common::tangle_subxt::tangle_testnet_runtime::api::runtime_types::tangle_testnet_runtime::{
         MaxDataLen, MaxKeyLen, MaxParticipants, MaxProofLen, MaxSignatureLen, MaxSubmissionLen,
     };
 

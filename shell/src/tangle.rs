@@ -9,9 +9,9 @@ use tangle_subxt::subxt::blocks::{Block, BlockRef};
 use tangle_subxt::subxt::ext::futures::TryFutureExt;
 use tangle_subxt::subxt::utils::AccountId32;
 use tangle_subxt::subxt::{self, PolkadotConfig};
-use tangle_subxt::tangle_runtime::api;
-use tangle_subxt::tangle_runtime::api::runtime_types::tangle_testnet_runtime::MaxAdditionalParamsLen;
-use tangle_subxt::tangle_runtime::api::runtime_types::{
+use tangle_subxt::tangle_testnet_runtime::api;
+use tangle_subxt::tangle_testnet_runtime::api::runtime_types::tangle_testnet_runtime::MaxAdditionalParamsLen;
+use tangle_subxt::tangle_testnet_runtime::api::runtime_types::{
     tangle_primitives::jobs::{PhaseResult, RpcResponseJobsData},
     tangle_primitives::roles::RoleType,
     tangle_testnet_runtime::{

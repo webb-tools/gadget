@@ -1,12 +1,14 @@
 use dfns_cggmp21::generic_ec::Curve;
 use dfns_cggmp21::key_refresh::msg::aux_only;
-
 use dfns_cggmp21::key_refresh::AuxInfoGenerationBuilder;
+use dfns_cggmp21::key_share::DirtyKeyShare;
+use dfns_cggmp21::key_share::Validate;
 use dfns_cggmp21::keygen::msg::threshold::Msg;
 use dfns_cggmp21::keygen::KeygenBuilder;
 use dfns_cggmp21::progress::PerfProfiler;
 use dfns_cggmp21::security_level::SecurityLevel;
 use dfns_cggmp21::supported_curves::{Secp256k1, Secp256r1, Stark};
+use dfns_cggmp21::KeyShare;
 use dfns_cggmp21::PregeneratedPrimes;
 use digest::typenum::U32;
 use digest::Digest;
@@ -20,9 +22,8 @@ use gadget_common::gadget::network::Network;
 use gadget_common::gadget::work_manager::WorkManager;
 use gadget_common::gadget::JobInitMetadata;
 use gadget_common::keystore::{ECDSAKeyStore, KeystoreBackend};
-use gadget_common::{prelude::*, utils};
-use gadget_common::tangle_subxt::tangle_runtime::api::runtime_types::bounded_collections::bounded_vec::BoundedVec;
-use gadget_common::tangle_subxt::tangle_runtime::api::runtime_types::tangle_testnet_runtime::{MaxParticipants, MaxSignatureLen, MaxKeyLen, MaxDataLen, MaxProofLen};
+use gadget_common::utils::{deserialize, serialize};
+use gadget_common::{prelude::*, tangle_runtime::*, utils};
 use gadget_core::job::{BuiltExecutableJobWrapper, JobBuilder, JobError};
 use gadget_core::job_manager::{ProtocolWorkManager, WorkManagerInterface};
 use itertools::Itertools;
@@ -122,7 +123,7 @@ where
         .map_err(|err| JobError {
             reason: format!("Keygen protocol error (run_and_serialize_keygen): {err:?}"),
         })?;
-    bincode2::serialize(&incomplete_key_share).map_err(|err| JobError {
+    serialize(&incomplete_key_share).map_err(|err| JobError {
         reason: format!("Keygen protocol error (run_and_serialize_keygen - serde): {err:?}"),
     })
 }
@@ -150,7 +151,7 @@ where
 {
     let incomplete_key_share: dfns_cggmp21::key_share::Valid<
         dfns_cggmp21::key_share::DirtyIncompleteKeyShare<E>,
-    > = bincode2::deserialize(&incomplete_key_share).map_err(|err| JobError {
+    > = deserialize(&incomplete_key_share).map_err(|err| JobError {
         reason: format!("Keygen protocol error (run_and_serialize_keyrefresh): {err:?}"),
     })?;
 
@@ -170,23 +171,24 @@ where
     logger.trace(format!("Aux info protocol report: {perf_report}"));
     logger.debug("Finished AsyncProtocol - Aux Info");
 
-    /*
     let key_share: KeyShare<E, S> = DirtyKeyShare {
         core: incomplete_key_share.into_inner(),
         aux: aux_info.into_inner(),
-    }.validate().map_err(|err| JobError {
+    }
+    .validate()
+    .map_err(|err| JobError {
         reason: format!("Keygen protocol validation error: {err:?}"),
-    })?;*/
+    })?;
 
-    let key_share =
-        dfns_cggmp21::KeyShare::<E, S>::make(incomplete_key_share, aux_info).map_err(|err| {
-            JobError {
-                reason: format!("Key share error: {err:?}"),
-            }
-        })?;
+    // let key_share =
+    //     dfns_cggmp21::KeyShare::<E, S>::make(incomplete_key_share, aux_info).map_err(|err| {
+    //         JobError {
+    //             reason: format!("Key share error: {err:?}"),
+    //         }
+    //     })?;
     // Serialize the key share and the public key
-    bincode2::serialize(&key_share)
-        .map(|ks| (ks, key_share.shared_public_key().to_bytes(true).to_vec()))
+    serialize(&key_share)
+        .map(|ks| (ks, key_share.shared_public_key.to_bytes(true).to_vec()))
         .map_err(|err| JobError {
             reason: format!("Keygen protocol error (run_and_serialize_keyrefresh): {err:?}"),
         })
@@ -557,7 +559,7 @@ pub async fn handle_public_key_gossip<KBE: KeystoreBackend>(
         participants: BoundedVec(participants),
         signatures: BoundedVec(signatures),
         threshold: t as _,
-        __ignore: Default::default(),
+        __subxt_unused_type_params: Default::default(),
     };
     verify_generated_dkg_key_ecdsa(res.clone(), logger);
     Ok(jobs::JobResult::DKGPhaseOne(res))

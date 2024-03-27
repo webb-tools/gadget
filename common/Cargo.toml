@@ -10,13 +10,13 @@ gadget-core = { workspace = true }
 protocol-macros = { workspace = true }
 tokio = { workspace = true }
 serde = { workspace = true, features = ["derive"] }
+serde_json = { workspace = true }
 auto_impl = { workspace = true }
 async-trait = { workspace = true }
 log = { workspace = true }
 parking_lot = { workspace = true }
 futures-util = { workspace = true }
 hex = { workspace = true }
-bincode2 = { workspace = true }
 serde_bytes = { workspace = true }
 anyhow = { workspace = true }
 futures = { workspace = true }
@@ -42,9 +42,10 @@ linked-hash-map = { workspace = true, optional = true }
 parity-scale-codec = { workspace = true, optional = true }
 scale-info = { workspace = true, optional = true }
 
-
 [features]
-default = ["substrate"]
+default = ["substrate", "tangle-testnet"]
+tangle-testnet = []
+tangle-mainnet = []
 substrate = [
   "gadget-core/substrate",
   "tangle-subxt",

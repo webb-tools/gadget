@@ -17,8 +17,10 @@ use gadget_common::{
 use gadget_core::gadget::substrate::Client;
 use sp_core::{ecdsa, ed25519, sr25519, ByteArray, Pair};
 use sp_keystore::Keystore;
-use tangle_subxt::tangle_runtime::api::runtime_types::tangle_primitives::roles::tss::ThresholdSignatureRoleType;
-use tangle_subxt::{subxt, tangle_runtime::api::runtime_types::tangle_primitives::roles::RoleType};
+use tangle_runtime::api::runtime_types::tangle_primitives::roles::tss::ThresholdSignatureRoleType;
+use tangle_runtime::api::runtime_types::tangle_primitives::roles::RoleType;
+use tangle_subxt::subxt;
+use tangle_subxt::tangle_testnet_runtime as tangle_runtime;
 
 use crate::config::ShellConfig;
 use crate::network::gossip::GossipHandle;

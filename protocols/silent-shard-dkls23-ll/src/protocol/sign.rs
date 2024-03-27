@@ -1,5 +1,6 @@
 use derivation_path::DerivationPath;
 
+use gadget_common::channels;
 use gadget_common::client::ClientWithApi;
 use gadget_common::config::Network;
 use gadget_common::gadget::message::{GadgetProtocolMessage, UserID};
@@ -7,8 +8,7 @@ use gadget_common::gadget::work_manager::WorkManager;
 use gadget_common::gadget::JobInitMetadata;
 use gadget_common::keystore::KeystoreBackend;
 use gadget_common::prelude::*;
-use gadget_common::tangle_subxt::tangle_runtime::api::runtime_types::bounded_collections::bounded_vec::BoundedVec;
-use gadget_common::channels;
+use gadget_common::tangle_runtime::*;
 use gadget_core::job::{BuiltExecutableJobWrapper, JobBuilder, JobError};
 use gadget_core::job_manager::{ProtocolWorkManager, WorkManagerInterface};
 use k256::ecdsa::signature::hazmat::PrehashVerifier;
@@ -34,7 +34,7 @@ pub struct SilentShardDKLS23SigningExtraParams {
     pub job_id: u64,
     pub role_type: roles::RoleType,
     pub key_share: SilentShardDKLS23KeyShare,
-    pub derivation_path: DerivationPath,
+    pub derivation_path: Option<BoundedVec<u8>>,
     pub input_data_to_sign: Vec<u8>,
     pub user_id_to_account_id_mapping: Arc<HashMap<UserID, ecdsa::Public>>,
 }
@@ -50,6 +50,7 @@ pub async fn create_next_job<KBE: KeystoreBackend, C: ClientWithApi, N: Network>
         panic!("Should be valid type")
     };
     let input_data_to_sign = p2_job.submission.0.to_vec();
+    let derivation_path = p2_job.derivation_path.clone();
     let previous_job_id = p2_job.phase_one_id;
 
     let phase1_job = job.phase1_job.expect("Should exist for a phase 2 job");
@@ -73,7 +74,6 @@ pub async fn create_next_job<KBE: KeystoreBackend, C: ClientWithApi, N: Network>
         })?;
 
     let user_id_to_account_id_mapping = Arc::new(mapping);
-
     let params = SilentShardDKLS23SigningExtraParams {
         i,
         t,
@@ -81,7 +81,7 @@ pub async fn create_next_job<KBE: KeystoreBackend, C: ClientWithApi, N: Network>
         job_id,
         role_type: job.role_type,
         key_share: key,
-        derivation_path: DerivationPath::from_str("m").unwrap(),
+        derivation_path,
         input_data_to_sign,
         user_id_to_account_id_mapping,
     };
@@ -153,6 +153,13 @@ pub async fn generate_protocol_from<KBE: KeystoreBackend, C: ClientWithApi, N: N
             let delivery = (signing_rx_async_proto, signing_tx_to_outbound);
             let party = MpcParty::connected(delivery);
             let data_hash = keccak_256(input_data_to_sign.as_slice());
+            // Deserialize the derivation path as an ascii string
+            let derivation_path_str = derivation_path
+                .as_ref()
+                .map(|path| path.0.to_vec())
+                .map(|path| String::from_utf8(path).unwrap_or_default())
+                .unwrap_or_else(|| "m".to_string());
+            let derivation_path = DerivationPath::from_str(&derivation_path_str).unwrap();
             let signature = rounds::sign::run_threshold_sign(
                 Some(&mut tracer),
                 i,
@@ -185,7 +192,6 @@ pub async fn generate_protocol_from<KBE: KeystoreBackend, C: ClientWithApi, N: N
                 // );
                 let data_hash = keccak_256(input_data_to_sign2.as_slice());
                 let signature = signature.group_signature.to_bytes().to_vec();
-                println!("Verifying key: {:?}", verifying_key);
                 let res = VerifyingKey::from_affine(verifying_key)
                     .map(|vk| {
                         vk.verify_prehash(&data_hash, &Signature::from_slice(&signature).unwrap())
@@ -193,28 +199,33 @@ pub async fn generate_protocol_from<KBE: KeystoreBackend, C: ClientWithApi, N: N
                     .map_err(|e| JobError {
                         reason: format!("Failed to verify signature: {e:?}"),
                     })?;
-                println!("Signature verification result: {:?}", res);
 
-                println!("Signature: {:?}", signature);
-                let job_result = jobs::JobResult::DKGPhaseTwo(jobs::tss::DKGTSSSignatureResult {
-                    signature_scheme: jobs::tss::DigitalSignatureScheme::EcdsaSecp256k1,
-                    data: BoundedVec(data_hash.to_vec()),
-                    signature: BoundedVec(signature.to_vec()),
-                    verifying_key: BoundedVec(verifying_key.to_bytes().to_vec()),
-                    derivation_path: None,
-                    __ignore: Default::default(),
-                });
+                if res.is_ok() {
+                    let job_result =
+                        jobs::JobResult::DKGPhaseTwo(jobs::tss::DKGTSSSignatureResult {
+                            signature_scheme: jobs::tss::DigitalSignatureScheme::EcdsaSecp256k1,
+                            derivation_path: None,
+                            data: BoundedVec(data_hash.to_vec()),
+                            signature: BoundedVec(signature.to_vec()),
+                            verifying_key: BoundedVec(verifying_key.to_bytes().to_vec()),
+                            __subxt_unused_type_params: Default::default(),
+                        });
 
-                pallet_tx
-                    .submit_job_result(
-                        additional_params.role_type,
-                        additional_params.job_id,
-                        job_result,
-                    )
-                    .await
-                    .map_err(|err| JobError {
-                        reason: format!("Failed to submit job result: {err:?}"),
-                    })?;
+                    pallet_tx
+                        .submit_job_result(
+                            additional_params.role_type,
+                            additional_params.job_id,
+                            job_result,
+                        )
+                        .await
+                        .map_err(|err| JobError {
+                            reason: format!("Failed to submit job result: {err:?}"),
+                        })?;
+                } else {
+                    return Err(JobError {
+                        reason: "Signature verification failed".to_string(),
+                    });
+                }
             } else {
                 println!("No signature was found");
             }

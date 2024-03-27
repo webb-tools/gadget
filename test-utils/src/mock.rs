@@ -276,7 +276,7 @@ parameter_types! {
     pub const MaxRolesPerValidator: u32 = 100;
     #[derive(Clone, RuntimeDebug, Eq, PartialEq, TypeInfo, Encode, Decode)]
     #[derive(Serialize, Deserialize)]
-    pub const MaxAdditionalParamsLen: u32 = 64 * MB;
+    pub const MaxAdditionalParamsLen: u32 = 256;
 }
 
 impl pallet_jobs::Config for Runtime {
@@ -293,10 +293,10 @@ impl pallet_jobs::Config for Runtime {
     type MaxKeyLen = MaxKeyLen;
     type MaxProofLen = MaxProofLen;
     type MaxActiveJobsPerValidator = MaxActiveJobsPerValidator;
-    type PalletId = JobsPalletId;
-    type WeightInfo = ();
-    type MisbehaviorHandler = MockMisbehaviorHandler;
     type MaxAdditionalParamsLen = MaxAdditionalParamsLen;
+    type PalletId = JobsPalletId;
+    type MisbehaviorHandler = MockMisbehaviorHandler;
+    type WeightInfo = ();
 }
 
 pub struct MockMisbehaviorHandler;
@@ -317,8 +317,8 @@ impl pallet_dkg::Config for Runtime {
     type MaxDataLen = MaxDataLen;
     type MaxKeyLen = MaxKeyLen;
     type MaxProofLen = MaxProofLen;
-    type WeightInfo = ();
     type MaxAdditionalParamsLen = MaxAdditionalParamsLen;
+    type WeightInfo = ();
 }
 
 impl pallet_zksaas::Config for Runtime {
@@ -333,8 +333,8 @@ impl pallet_zksaas::Config for Runtime {
     type MaxDataLen = MaxDataLen;
     type MaxKeyLen = MaxKeyLen;
     type MaxProofLen = MaxProofLen;
-    type WeightInfo = ();
     type MaxAdditionalParamsLen = MaxAdditionalParamsLen;
+    type WeightInfo = ();
 }
 
 construct_runtime!(
@@ -696,14 +696,10 @@ pub mod mock_wrapper_client {
     use gadget_common::config::ClientWithApi;
     use gadget_common::locks::TokioMutexExt;
     use gadget_common::tangle_subxt::subxt::utils::AccountId32;
-    use gadget_common::tangle_subxt::tangle_runtime::api::runtime_types::tangle_primitives::{
+    use gadget_common::tangle_subxt::tangle_testnet_runtime::api::runtime_types::tangle_primitives::{
         jobs, roles,
     };
-    use gadget_common::tangle_subxt::tangle_runtime::api::runtime_types::tangle_testnet_runtime::{
-        MaxDataLen, MaxKeyLen, MaxParticipants, MaxProofLen, MaxSignatureLen, MaxSubmissionLen,
-    };
-
-    use gadget_common::prelude::MaxAdditionalParamsLen;
+    use gadget_common::tangle_runtime::*;
     use gadget_core::gadget::substrate::{self, Client};
     use pallet_jobs_rpc_runtime_api::JobsApi;
     use parity_scale_codec::{Decode, Encode};

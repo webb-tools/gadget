@@ -37,7 +37,7 @@ rand = { workspace = true }
 hex = { workspace = true }
 sha2 = "0.10.8"
 futures = { workspace = true }
-bincode2 = { workspace = true }
+bincode = { workspace = true }
 # Protocols
 dfns-cggmp21-protocol = { workspace = true }
 zcash-frost-protocol = { workspace = true }

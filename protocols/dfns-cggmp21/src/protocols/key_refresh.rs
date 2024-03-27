@@ -2,6 +2,8 @@ use crate::protocols::{DefaultCryptoHasher, DefaultSecurityLevel};
 use dfns_cggmp21::generic_ec::Curve;
 use dfns_cggmp21::key_refresh::msg::aux_only;
 use dfns_cggmp21::key_refresh::AuxInfoGenerationBuilder;
+use dfns_cggmp21::key_share::DirtyKeyShare;
+use dfns_cggmp21::key_share::Validate;
 use dfns_cggmp21::security_level::SecurityLevel;
 use dfns_cggmp21::supported_curves::{Secp256k1, Secp256r1, Stark};
 use dfns_cggmp21::{KeyShare, PregeneratedPrimes};
@@ -15,6 +17,8 @@ use gadget_common::gadget::JobInitMetadata;
 use gadget_common::keystore::KeystoreBackend;
 use gadget_common::prelude::*;
 use gadget_common::prelude::{DebugLogger, FullProtocolConfig};
+use gadget_common::tangle_runtime::*;
+use gadget_common::utils::serialize;
 use gadget_core::job::{BuiltExecutableJobWrapper, JobBuilder, JobError};
 use gadget_core::job_manager::{ProtocolWorkManager, WorkManagerInterface};
 use rand::SeedableRng;
@@ -296,26 +300,28 @@ async fn handle_key_refresh<
             reason: format!("KeyRefresh protocol error: {err:?}"),
         })?;
 
-    /*
     let key: KeyShare<E, S> = DirtyKeyShare::<E, S> {
         core: local_key_share.into_inner().core,
         aux: aux_info.into_inner(),
-    }.validate().map_err(|err| JobError {
+    }
+    .validate()
+    .map_err(|err| JobError {
         reason: format!("KeyRefresh protocol validation error: {err:?}"),
-    })?;*/
+    })?;
 
-    let key = local_key_share
-        .update_aux(aux_info)
-        .map_err(|err| JobError {
-            reason: format!("KeyRefresh protocol error: {err:?}"),
-        })?;
+    // let key = local_key_share
+    //     .update_aux(aux_info)
+    //     .map_err(|err| JobError {
+    //         reason: format!("KeyRefresh protocol error: {err:?}"),
+    //     })?;
+
     let perf_report = tracer.get_report().map_err(|err| JobError {
         reason: format!("KeyRefresh protocol error: {err:?}"),
     })?;
     logger.trace(format!("KeyRefresh protocol report: {perf_report}"));
 
     logger.debug("Finished AsyncProtocol - KeyRefresh");
-    let serialized_local_key = bincode2::serialize(&key).map_err(|err| JobError {
+    let serialized_local_key = serialize(&key).map_err(|err| JobError {
         reason: format!("KeyRefresh protocol error: {err:?}"),
     })?;
     Ok(serialized_local_key)

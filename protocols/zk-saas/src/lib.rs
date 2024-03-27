@@ -5,6 +5,7 @@ use gadget_common::client::{ClientWithApi, JobsClient, PalletSubmitter};
 use gadget_common::debug_logger::DebugLogger;
 use gadget_common::full_protocol::SharedOptional;
 use gadget_common::prelude::*;
+use gadget_common::tangle_runtime::*;
 use gadget_common::{generate_protocol, Error};
 use mpc_net::prod::RustlsCertificate;
 use network::ZkProtocolNetworkConfig;

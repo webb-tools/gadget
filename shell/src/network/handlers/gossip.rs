@@ -84,7 +84,7 @@ impl NetworkService<'_> {
         };
         self.logger
             .debug(format!("Got message from peer: {origin}",));
-        match bincode2::deserialize::<GossipMessage>(&message.data) {
+        match bincode::deserialize::<GossipMessage>(&message.data) {
             Ok(GossipMessage { topic, raw_payload }) => {
                 if let Some((_, tx, _)) = self
                     .inbound_mapping

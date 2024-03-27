@@ -9,7 +9,7 @@ use frost_core::{
     Ciphersuite, Identifier,
 };
 use futures::SinkExt;
-use gadget_common::prelude::*;
+use gadget_common::tangle_runtime::*;
 use rand_core::{CryptoRng, RngCore};
 use round_based::{
     rounds_router::{

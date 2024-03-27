@@ -4,21 +4,12 @@ use std::time::Duration;
 use color_eyre::Result;
 use gadget_common::config::ClientWithApi;
 use gadget_common::locks::TokioMutexExt;
+use gadget_common::tangle_runtime::*;
 use gadget_core::gadget::substrate::{Client, FinalityNotification};
 use tangle_subxt::subxt::blocks::{Block, BlockRef};
 use tangle_subxt::subxt::ext::futures::TryFutureExt;
-use tangle_subxt::subxt::utils::AccountId32;
 use tangle_subxt::subxt::{self, PolkadotConfig};
-use tangle_subxt::tangle_runtime::api;
-use tangle_subxt::tangle_runtime::api::runtime_types::tangle_testnet_runtime::MaxAdditionalParamsLen;
-use tangle_subxt::tangle_runtime::api::runtime_types::{
-    tangle_primitives::jobs::{PhaseResult, RpcResponseJobsData},
-    tangle_primitives::roles::RoleType,
-    tangle_testnet_runtime::{
-        MaxDataLen, MaxKeyLen, MaxParticipants, MaxProofLen, MaxSignatureLen, MaxSubmissionLen,
-    },
-};
-
+use tangle_subxt::tangle_testnet_runtime::api;
 pub type TangleConfig = subxt::PolkadotConfig;
 type TangleClient = subxt::OnlineClient<TangleConfig>;
 type TangleBlock = Block<TangleConfig, TangleClient>;

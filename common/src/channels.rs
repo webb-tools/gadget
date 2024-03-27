@@ -4,6 +4,7 @@ use crate::gadget::message::{GadgetProtocolMessage, UserID};
 use crate::gadget::network::Network;
 use crate::gadget::work_manager::WorkManager;
 use crate::prelude::DebugLogger;
+use crate::utils::{deserialize, serialize};
 use futures::StreamExt;
 use gadget_core::job_manager::WorkManagerInterface;
 use round_based::Msg;
@@ -42,7 +43,7 @@ pub fn create_job_manager_to_async_protocol_channel_split<
     // Take the messages from the gadget and send them to the async protocol
     tokio::task::spawn(async move {
         while let Some(msg) = rx_gadget.recv().await {
-            match bincode2::deserialize::<MultiplexedChannelMessage<C1, C2>>(&msg.payload) {
+            match deserialize::<MultiplexedChannelMessage<C1, C2>>(&msg.payload) {
                 Ok(msg) => match msg {
                     MultiplexedChannelMessage::Channel1(msg) => {
                         if tx_to_async_proto_1.unbounded_send(Ok(msg)).is_err() {
@@ -499,9 +500,7 @@ pub fn create_job_manager_to_async_protocol_channel_split_io<
                 ));
                 continue;
             }
-            match bincode2::deserialize::<MultiplexedChannelMessage<O::Inner, C2>>(
-                &msg_orig.payload,
-            ) {
+            match deserialize::<MultiplexedChannelMessage<O::Inner, C2>>(&msg_orig.payload) {
                 Ok(msg) => match msg {
                     MultiplexedChannelMessage::Channel1(msg) => {
                         logger.trace(format!("Received message count: {id}", id = id + 1));
@@ -660,7 +659,7 @@ pub fn create_job_manager_to_async_protocol_channel_split_io_triplex<
                 ));
                 continue;
             }
-            match bincode2::deserialize::<MultiplexedChannelMessage<O1::Inner, O2::Inner, C3>>(
+            match deserialize::<MultiplexedChannelMessage<O1::Inner, O2::Inner, C3>>(
                 &msg_orig.payload,
             ) {
                 Ok(msg) => match msg {
@@ -850,7 +849,7 @@ where
         task_hash: associated_task_id,
         from: my_user_id,
         to: to.as_user_id(),
-        payload: bincode2::serialize(&message_multiplexed).expect("Failed to serialize message"),
+        payload: serialize(&message_multiplexed).expect("Failed to serialize message"),
         from_network_id: from_account_id,
         to_network_id: to_account_id,
     };

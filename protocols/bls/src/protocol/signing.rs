@@ -8,7 +8,7 @@ use gadget_common::gadget::JobInitMetadata;
 use gadget_common::keystore::KeystoreBackend;
 use gadget_common::prelude::*;
 use gadget_common::sp_core::{ecdsa, keccak_256, Pair};
-use gadget_common::tangle_subxt::tangle_runtime::api::runtime_types::bounded_collections::bounded_vec::BoundedVec;
+use gadget_common::tangle_runtime::*;
 use gadget_common::{
     BuiltExecutableJobWrapper, Error, JobBuilder, JobError, ProtocolWorkManager,
     WorkManagerInterface,
@@ -226,11 +226,11 @@ pub async fn generate_protocol_from<C: ClientWithApi, N: Network, KBE: KeystoreB
             logger.info("BlsSigningProtocol finished verification stage");
             let job_result = jobs::JobResult::DKGPhaseTwo(jobs::tss::DKGTSSSignatureResult {
                 signature_scheme: jobs::tss::DigitalSignatureScheme::Bls381,
+                derivation_path: None,
                 data: BoundedVec(additional_params.input_data_to_sign.clone()),
                 signature: BoundedVec(signature),
                 verifying_key: BoundedVec(signing_key),
-                derivation_path: None,
-                __ignore: Default::default(),
+                __subxt_unused_type_params: Default::default(),
             });
 
             *result.lock().await = Some(job_result);

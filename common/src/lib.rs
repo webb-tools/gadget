@@ -40,14 +40,51 @@ pub mod prelude {
     pub use sp_runtime::traits::Block;
     pub use std::pin::Pin;
     pub use std::sync::Arc;
-    pub use tangle_subxt::subxt::utils::AccountId32;
-    pub use tangle_subxt::tangle_runtime::api::runtime_types::tangle_primitives::{jobs, roles};
-    pub use tangle_subxt::tangle_runtime::api::runtime_types::tangle_testnet_runtime::{
-        MaxAdditionalParamsLen, MaxParticipants, MaxSubmissionLen,
-    };
-
     pub use tokio::sync::mpsc::{UnboundedReceiver, UnboundedSender};
 }
+
+#[cfg(feature = "tangle-testnet")]
+pub mod tangle_runtime {
+    pub use tangle_subxt::subxt::utils::AccountId32;
+    pub use tangle_subxt::tangle_testnet_runtime::api;
+    pub use tangle_subxt::tangle_testnet_runtime::api::runtime_types::{
+        bounded_collections::bounded_vec::BoundedVec,
+        tangle_primitives::jobs::{
+            self,
+            tss::{self, *},
+            zksaas::{self, *},
+            JobType::*,
+            PhaseResult, RpcResponseJobsData,
+        },
+        tangle_primitives::roles::{self, RoleType},
+        tangle_testnet_runtime::{
+            MaxAdditionalParamsLen, MaxDataLen, MaxKeyLen, MaxParticipants, MaxProofLen,
+            MaxSignatureLen, MaxSubmissionLen,
+        },
+    };
+}
+
+#[cfg(feature = "tangle-mainnet")]
+pub mod tangle_runtime {
+    pub use tangle_subxt::subxt::utils::AccountId32;
+    pub use tangle_subxt::tangle_mainnet_runtime::api;
+    pub use tangle_subxt::tangle_mainnet_runtime::api::runtime_types::{
+        bounded_collections::bounded_vec::BoundedVec,
+        tangle_primitives::jobs::{
+            self,
+            tss::{self, *},
+            zksaas::{self, *},
+            JobType::*,
+            PhaseResult,
+        },
+        tangle_primitives::roles::{self, RoleType},
+        tangle_runtime::{
+            MaxAdditionalParamsLen, MaxDataLen, MaxKeyLen, MaxParticipants, MaxProofLen,
+            MaxSignatureLen, MaxSubmissionLen,
+        },
+    };
+}
+
 pub mod channels;
 pub mod client;
 pub mod config;

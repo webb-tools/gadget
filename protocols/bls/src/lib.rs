@@ -2,6 +2,7 @@ use crate::protocol::keygen::BlsKeygenAdditionalParams;
 use async_trait::async_trait;
 use gadget_common::full_protocol::SharedOptional;
 use gadget_common::prelude::*;
+use gadget_common::tangle_runtime::*;
 use gadget_common::{generate_protocol, generate_setup_and_run_command};
 use protocol::signing::BlsSigningAdditionalParams;
 use protocol_macros::protocol;

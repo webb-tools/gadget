@@ -1,4 +1,4 @@
-use crate::gadget::work_manager::WorkManager;
+use crate::{gadget::work_manager::WorkManager, utils::serialize};
 use gadget_core::job_manager::{ProtocolMessageMetadata, WorkManagerInterface};
 use serde::{Deserialize, Serialize};
 use sp_core::ecdsa;
@@ -53,7 +53,7 @@ impl ProtocolMessageMetadata<WorkManager> for GadgetProtocolMessage {
 impl GadgetProtocolMessage {
     /// Returns a hash of the message
     pub fn hash(&self) -> Vec<u8> {
-        let serialized = bincode2::serialize(&self).expect("Should serialize");
+        let serialized = serialize(&self).expect("Should serialize");
         sp_core::keccak_256(&serialized).to_vec()
     }
 }

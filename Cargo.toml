@@ -28,19 +28,19 @@ test-utils = { path = "./test-utils" }
 protocol-macros = { path = "./protocol-macros" }
 
 snowbridge-milagro-bls = { git = "https://github.com/Snowfork/milagro_bls", default-features = false, rev = "43a5d480ed6e3b83de4cf54888680d51604199e6" }
-gennaro-dkg = { git = "https://github.com/mikelodder7/gennaro-dkg.git", default-features = false }
-pallet-jobs-rpc-runtime-api = { git = "https://github.com/webb-tools/tangle.git" }
-pallet-jobs = { git = "https://github.com/webb-tools/tangle.git" }
-pallet-dkg = { git = "https://github.com/webb-tools/tangle.git" }
-pallet-zksaas = { git = "https://github.com/webb-tools/tangle.git" }
-tangle-primitives = { git = "https://github.com/webb-tools/tangle.git" }
-tangle-subxt = { git = "https://github.com/webb-tools/tangle.git", default-features = false }
-# pallet-jobs-rpc-runtime-api = { path = "../tangle/pallets/jobs/rpc/runtime-api" }
-# pallet-jobs = { path = "../tangle/pallets/jobs" }
-# pallet-dkg = { path = "../tangle/pallets/dkg" }
-# pallet-zksaas = { path = "../tangle/pallets/zksaas" }
-# tangle-primitives = { path = "../tangle/primitives" }
-# tangle-subxt = { path = "../tangle/tangle-subxt", default-features = false }
+gennaro-dkg = { git = "https://github.com/mikelodder7/gennaro-dkg.git", default-features = false, rev = "1c15242" }
+# pallet-jobs-rpc-runtime-api = { git = "https://github.com/webb-tools/tangle.git", branch = "main" }
+# pallet-jobs = { git = "https://github.com/webb-tools/tangle.git", branch = "main" }
+# pallet-dkg = { git = "https://github.com/webb-tools/tangle.git", branch = "main" }
+# pallet-zksaas = { git = "https://github.com/webb-tools/tangle.git", branch = "main" }
+# tangle-primitives = { git = "https://github.com/webb-tools/tangle.git", branch = "main" }
+# tangle-subxt = { git = "https://github.com/webb-tools/tangle.git", default-features = false, branch = "main" }
+pallet-jobs-rpc-runtime-api = { path = "../tangle/pallets/jobs/rpc/runtime-api" }
+pallet-jobs = { path = "../tangle/pallets/jobs" }
+pallet-dkg = { path = "../tangle/pallets/dkg" }
+pallet-zksaas = { path = "../tangle/pallets/zksaas" }
+tangle-primitives = { path = "../tangle/primitives" }
+tangle-subxt = { path = "../tangle/tangle-subxt", default-features = false }
 subxt-signer = { version = "0.34.0", default-features = false, features = ["native"] }
 
 # Round-based dependencies
@@ -51,17 +51,17 @@ round-based-zengo = { package = "round-based", git = "https://github.com/ZenGo-X
 curv = { package = "curv-kzen", version = "0.10.0" }
 digest = "0.10"
 # dfns-cggmp21 = { package = "cggmp21", version = "0.1.1" }
-dfns-cggmp21 = { package = "cggmp21", git = "https://github.com/webb-tools/cggmp21", branch = "v0.1.1-fix" }
-udigest = { version = "0.1", features = ["std", "derive"] }
+dfns-cggmp21 = { package = "cggmp21", git = "https://github.com/dfns/cggmp21" }
+udigest = { version = "0.1", features = ["std", "derive"]}
 
-frost-core = { git = "https://github.com/salman01zp/frost", branch = "salman/bump-curve25519-dalek" }
-frost-ed25519 = { git = "https://github.com/salman01zp/frost", branch = "salman/bump-curve25519-dalek" }
-frost-ed448 = { git = "https://github.com/salman01zp/frost", branch = "salman/bump-curve25519-dalek" }
-frost-p256 = { git = "https://github.com/salman01zp/frost", branch = "salman/bump-curve25519-dalek" }
-frost-p384 = { git = "https://github.com/salman01zp/frost", branch = "salman/bump-curve25519-dalek" }
-frost-ristretto255 = { git = "https://github.com/salman01zp/frost", branch = "salman/bump-curve25519-dalek" }
-frost-secp256k1 = { git = "https://github.com/salman01zp/frost", branch = "salman/bump-curve25519-dalek" }
-frost-rerandomized = { git = "https://github.com/salman01zp/frost", branch = "salman/bump-curve25519-dalek" }
+frost-core = { git = "https://github.com/LIT-protocol/frost" }
+frost-ed25519 = { git = "https://github.com/LIT-protocol/frost" }
+frost-ed448 = { git = "https://github.com/LIT-protocol/frost" }
+frost-p256 = { git = "https://github.com/LIT-protocol/frost" }
+frost-p384 = { git = "https://github.com/LIT-protocol/frost" }
+frost-ristretto255 = { git = "https://github.com/LIT-protocol/frost" }
+frost-secp256k1 = { git = "https://github.com/LIT-protocol/frost" }
+frost-rerandomized = { git = "https://github.com/LIT-protocol/frost" }
 
 bls12_381_plus = "0.8.13"
 dkls23-ll = { git = "https://github.com/drewstone/silent-shard-dkls23-ll.git", branch = "drew/thiserror-dep" }
@@ -143,7 +143,7 @@ ark-bn254 = { version = "0.4.0", default-features = false, features = ["curve"] 
 
 tokio-rustls = "0.24.1"
 tokio = "1.32.0"
-bincode2 = "2"
+bincode = "1.3.3"
 futures-util = "0.3.30"
 serde = "1.0.188"
 serde_json = "1.0"

@@ -1,8 +1,6 @@
 use gadget_common::full_protocol::SharedOptional;
 use gadget_common::prelude::*;
-use gadget_common::tangle_subxt::tangle_runtime::api::runtime_types::tangle_testnet_runtime::{
-    MaxParticipants, MaxSubmissionLen,
-};
+use gadget_common::tangle_runtime::*;
 use sp_core::sr25519;
 
 #[protocol]

@@ -6,6 +6,7 @@ use crate::gadget::{JobInitMetadata, WorkManagerConfig};
 use crate::keystore::{ECDSAKeyStore, KeystoreBackend};
 use crate::prometheus::PrometheusConfig;
 use crate::protocol::AsyncProtocol;
+use crate::tangle_runtime::*;
 use crate::Error;
 use async_trait::async_trait;
 use gadget_core::job::{BuiltExecutableJobWrapper, JobError};
@@ -16,11 +17,6 @@ use sp_core::ecdsa::{Public, Signature};
 use sp_core::{keccak_256, sr25519};
 use sp_io::crypto::ecdsa_verify_prehashed;
 use std::sync::Arc;
-use tangle_subxt::subxt::utils::AccountId32;
-use tangle_subxt::tangle_runtime::api::runtime_types::tangle_primitives::{jobs, roles};
-use tangle_subxt::tangle_runtime::api::runtime_types::tangle_testnet_runtime::{
-    MaxAdditionalParamsLen, MaxParticipants, MaxSubmissionLen,
-};
 use tokio::sync::mpsc::UnboundedReceiver;
 
 pub type SharedOptional<T> = Arc<Mutex<Option<T>>>;

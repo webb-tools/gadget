@@ -20,10 +20,10 @@ secret-sharing = { workspace = true }
 dist-primitives = { workspace = true }
 groth16 = { workspace = true }
 gadget-core = { workspace = true }
-bincode2 = { workspace = true }
 tokio = { workspace = true }
 futures-util = { workspace = true }
 serde = { workspace = true, features = ["derive"] }
+serde_json = { workspace = true }
 serde_bytes = { workspace = true }
 async-trait = { workspace = true }
 parking_lot = { workspace = true }

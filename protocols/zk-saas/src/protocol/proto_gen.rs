@@ -1,10 +1,10 @@
 use crate::network::RegistantId;
 use async_trait::async_trait;
 use bytes::Bytes;
-use gadget_common::client::ClientWithApi;
 use gadget_common::gadget::message::GadgetProtocolMessage;
 use gadget_common::gadget::network::Network;
 use gadget_common::gadget::work_manager::WorkManager;
+use gadget_common::{client::ClientWithApi, utils::serialize};
 use gadget_core::job_manager::WorkManagerInterface;
 use mpc_net::{MpcNet, MpcNetError, MultiplexedStreamID};
 use serde::{Deserialize, Serialize};
@@ -100,7 +100,7 @@ impl<P: Send + Sync, N: Network, C: ClientWithApi> MpcNet for ZkAsyncProtocolPar
                 from: self.party_id,
                 to: Some(id),
                 task_hash: self.associated_task_id,
-                payload: bincode2::serialize(&inner_payload).expect("Failed to serialize message"),
+                payload: serialize(&inner_payload).expect("Failed to serialize message"),
                 from_network_id: Some(self.my_network_id),
                 to_network_id: Some(to_network_id),
             })

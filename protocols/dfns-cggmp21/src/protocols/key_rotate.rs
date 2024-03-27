@@ -8,7 +8,7 @@ use gadget_common::gadget::JobInitMetadata;
 use gadget_common::keystore::KeystoreBackend;
 use gadget_common::prelude::FullProtocolConfig;
 use gadget_common::prelude::*;
-use gadget_common::tangle_subxt::tangle_runtime::api::runtime_types::bounded_collections::bounded_vec::BoundedVec;
+use gadget_common::tangle_runtime::*;
 use gadget_core::job::{BuiltExecutableJobWrapper, JobBuilder, JobError};
 use gadget_core::job_manager::{ProtocolWorkManager, WorkManagerInterface};
 use rand::SeedableRng;
@@ -133,8 +133,8 @@ pub async fn generate_protocol_from<C: ClientWithApi, KBE: KeystoreBackend, N: N
         signers,
         t,
         new_phase_one_id,
-        serialized_key_share,
         role_type,
+        serialized_key_share,
         new_serialized_key_share,
         mapping,
     ) = (
@@ -142,8 +142,8 @@ pub async fn generate_protocol_from<C: ClientWithApi, KBE: KeystoreBackend, N: N
         additional_params.signers,
         additional_params.t,
         additional_params.new_phase_one_id,
-        additional_params.key,
         additional_params.role_type.clone(),
+        additional_params.key,
         additional_params.new_key.clone(),
         additional_params.user_id_to_account_id_mapping.clone(),
     );
@@ -194,6 +194,7 @@ pub async fn generate_protocol_from<C: ClientWithApi, KBE: KeystoreBackend, N: N
                         i,
                         signers,
                         serialized_key_share,
+                        None,
                     )
                     .await?
                 }
@@ -220,6 +221,7 @@ pub async fn generate_protocol_from<C: ClientWithApi, KBE: KeystoreBackend, N: N
                         i,
                         signers,
                         serialized_key_share,
+                        None,
                     )
                     .await?
                 }
@@ -239,6 +241,7 @@ pub async fn generate_protocol_from<C: ClientWithApi, KBE: KeystoreBackend, N: N
                         i,
                         signers,
                         serialized_key_share,
+                        None,
                     )
                     .await?
                 }
@@ -265,13 +268,13 @@ pub async fn generate_protocol_from<C: ClientWithApi, KBE: KeystoreBackend, N: N
                 let job_result =
                     jobs::JobResult::DKGPhaseFour(jobs::tss::DKGTSSKeyRotationResult {
                         signature_scheme: jobs::tss::DigitalSignatureScheme::EcdsaSecp256k1,
+                        derivation_path: None,
                         signature: BoundedVec(signature),
                         phase_one_id,
                         new_phase_one_id,
                         new_key: BoundedVec(new_public_key),
                         key: BoundedVec(public_key),
-                        derivation_path: None,
-                        __ignore: Default::default(),
+                        __subxt_unused_type_params: Default::default(),
                     });
 
                 client

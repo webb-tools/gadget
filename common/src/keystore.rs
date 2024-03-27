@@ -1,3 +1,4 @@
+use crate::utils::{deserialize, serialize};
 use crate::Error;
 use async_trait::async_trait;
 use parking_lot::RwLock;
@@ -111,10 +112,9 @@ impl InMemoryBackend {
 impl KeystoreBackend for InMemoryBackend {
     async fn get<T: DeserializeOwned>(&self, key: &[u8; 32]) -> Result<Option<T>, crate::Error> {
         if let Some(bytes) = self.map.read().get(key).cloned() {
-            let value: T =
-                bincode2::deserialize(&bytes).map_err(|rr| crate::Error::KeystoreError {
-                    err: format!("Failed to deserialize value: {:?}", rr),
-                })?;
+            let value: T = deserialize(&bytes).map_err(|rr| crate::Error::KeystoreError {
+                err: format!("Failed to deserialize value: {:?}", rr),
+            })?;
             Ok(Some(value))
         } else {
             Ok(None)
@@ -122,7 +122,7 @@ impl KeystoreBackend for InMemoryBackend {
     }
 
     async fn set<T: Serialize + Send>(&self, key: &[u8; 32], value: T) -> Result<(), crate::Error> {
-        let serialized = bincode2::serialize(&value).map_err(|rr| crate::Error::KeystoreError {
+        let serialized = serialize(&value).map_err(|rr| crate::Error::KeystoreError {
             err: format!("Failed to serialize value: {:?}", rr),
         })?;
         self.map.write().insert(*key, serialized);
@@ -173,10 +173,9 @@ impl KeystoreBackend for SqliteBackend {
         match result {
             Some(row) => {
                 let value: Vec<u8> = row.get("value");
-                let value: T =
-                    bincode2::deserialize(&value).map_err(|rr| Error::KeystoreError {
-                        err: format!("Failed to deserialize value: {:?}", rr),
-                    })?;
+                let value: T = deserialize(&value).map_err(|rr| Error::KeystoreError {
+                    err: format!("Failed to deserialize value: {:?}", rr),
+                })?;
                 Ok(Some(value))
             }
             None => Ok(None),
@@ -185,7 +184,7 @@ impl KeystoreBackend for SqliteBackend {
 
     async fn set<T: Serialize + Send>(&self, key: &[u8; 32], value: T) -> Result<(), Error> {
         let key = key_to_string(key);
-        let value = bincode2::serialize(&value).map_err(|rr| Error::KeystoreError {
+        let value = serialize(&value).map_err(|rr| Error::KeystoreError {
             err: format!("Failed to serialize value: {:?}", rr),
         })?;
 

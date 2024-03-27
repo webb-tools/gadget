@@ -4,6 +4,7 @@ use futures_util::sink::SinkExt;
 use futures_util::stream::{SplitSink, SplitStream};
 use futures_util::StreamExt;
 use gadget_common::keystore::{ECDSAKeyStore, KeystoreBackend};
+use gadget_common::utils::{deserialize, serialize};
 use gadget_core::job_manager::WorkManagerInterface;
 use mpc_net::multi::WrappedStream;
 use mpc_net::prod::{CertToDer, RustlsCertificate};
@@ -394,7 +395,7 @@ fn handle_stream_as_king(
         });
 
         while let Some(Ok(message)) = stream.next().await {
-            match bincode2::deserialize::<RegistryPacket>(&message) {
+            match deserialize::<RegistryPacket>(&message) {
                 Ok(packet) => match packet {
                     RegistryPacket::Register { id, cert_der } => {
                         log::info!("[Registry] Received registration for id {id}");
@@ -441,7 +442,7 @@ async fn send_stream<R: AsyncRead + AsyncWrite + Unpin>(
     stream: &mut SplitSink<WrappedStream<R>, Bytes>,
     payload: RegistryPacket,
 ) -> Result<(), Error> {
-    let serialized = bincode2::serialize(&payload).map_err(|err| Error::RegistrySendError {
+    let serialized = serialize(&payload).map_err(|err| Error::RegistrySendError {
         err: err.to_string(),
     })?;
 
@@ -466,10 +467,9 @@ async fn recv_stream<R: AsyncRead + AsyncWrite + Unpin>(
             err: err.to_string(),
         })?;
 
-    let deserialized =
-        bincode2::deserialize(&message).map_err(|err| Error::RegistrySerializationError {
-            err: err.to_string(),
-        })?;
+    let deserialized = deserialize(&message).map_err(|err| Error::RegistrySerializationError {
+        err: err.to_string(),
+    })?;
 
     Ok(deserialized)
 }

@@ -7,7 +7,6 @@ use structopt::StructOpt;
 mod config;
 mod keystore;
 mod network;
-mod protocols;
 mod shell;
 mod tangle;
 

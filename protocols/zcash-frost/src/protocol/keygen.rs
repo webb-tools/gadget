@@ -13,9 +13,7 @@ use gadget_common::gadget::work_manager::WorkManager;
 use gadget_common::gadget::JobInitMetadata;
 use gadget_common::keystore::{ECDSAKeyStore, KeystoreBackend};
 use gadget_common::prelude::*;
-use gadget_common::tangle_subxt::tangle_runtime::api::runtime_types::bounded_collections::bounded_vec::BoundedVec;
-use gadget_common::tangle_subxt::tangle_runtime::api::runtime_types::tangle_testnet_runtime::{MaxParticipants, MaxKeyLen, MaxProofLen, MaxDataLen, MaxSignatureLen};
-
+use gadget_common::tangle_runtime::*;
 use gadget_common::{channels, utils};
 use gadget_core::job::{BuiltExecutableJobWrapper, JobBuilder, JobError};
 use gadget_core::job_manager::{ProtocolWorkManager, WorkManagerInterface};
@@ -426,7 +424,7 @@ async fn handle_public_key_gossip<KBE: KeystoreBackend>(
         participants,
         signatures: BoundedVec(signatures),
         threshold: t as _,
-        __ignore: Default::default(),
+        __subxt_unused_type_params: Default::default(),
     };
     verify_generated_dkg_key_ecdsa(res.clone(), logger);
     Ok(jobs::JobResult::DKGPhaseOne(res))

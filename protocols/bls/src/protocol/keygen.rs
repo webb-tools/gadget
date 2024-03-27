@@ -3,8 +3,7 @@ use crate::protocol::state_machine::BlsStateMachine;
 use gadget_common::gadget::message::UserID;
 use gadget_common::prelude::*;
 use gadget_common::sp_core::{ecdsa, keccak_256, ByteArray, Pair};
-use gadget_common::tangle_subxt::tangle_runtime::api::runtime_types::bounded_collections::bounded_vec::BoundedVec;
-use gadget_common::tangle_subxt::tangle_runtime::api::runtime_types::tangle_testnet_runtime::{MaxParticipants, MaxProofLen, MaxDataLen, MaxSignatureLen, MaxKeyLen};
+use gadget_common::tangle_runtime::*;
 use itertools::Itertools;
 use round_based::Msg;
 use std::collections::{BTreeMap, HashMap};
@@ -302,7 +301,7 @@ pub(crate) async fn handle_public_key_broadcast<KBE: KeystoreBackend>(
             participants: BoundedVec(participants),
             signatures: BoundedVec(signatures),
             threshold: t as u8,
-            __ignore: Default::default(),
+            __subxt_unused_type_params: Default::default(),
         },
     ))
 }

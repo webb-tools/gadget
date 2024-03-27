@@ -73,7 +73,7 @@ impl<'a> NetworkService<'a> {
         let _enter = self.span.enter();
         match (msg.message_type, msg.payload) {
             (MessageType::Broadcast, GossipOrRequestResponse::Gossip(payload)) => {
-                let gossip_message = bincode2::serialize(&payload).expect("Should serialize");
+                let gossip_message = bincode::serialize(&payload).expect("Should serialize");
                 if let Err(e) = self
                     .swarm
                     .behaviour_mut()
@@ -323,7 +323,7 @@ impl Network for GossipHandle {
             .expect("There should be only a single caller for `next_message`");
 
         let message = lock.recv().await?;
-        match bincode2::deserialize(&message) {
+        match bincode::deserialize(&message) {
             Ok(message) => Some(message),
             Err(e) => {
                 self.logger
@@ -359,11 +359,11 @@ impl Network for GossipHandle {
         let payload_inner = match message_type {
             MessageType::Broadcast => GossipOrRequestResponse::Gossip(GossipMessage {
                 topic: self.topic.to_string(),
-                raw_payload: bincode2::serialize(&message).expect("Should serialize"),
+                raw_payload: bincode::serialize(&message).expect("Should serialize"),
             }),
             MessageType::P2P(_) => GossipOrRequestResponse::Request(MyBehaviourRequest::Message {
                 topic: self.topic.to_string(),
-                raw_payload: bincode2::serialize(&message).expect("Should serialize"),
+                raw_payload: bincode::serialize(&message).expect("Should serialize"),
             }),
         };
 
@@ -386,6 +386,7 @@ mod tests {
     use crate::config::{KeystoreConfig, ShellConfig, SubxtConfig};
     use crate::network::setup::setup_libp2p_network;
     use crate::shell::wait_for_connection_to_bootnodes;
+    use gadget_common::config::Network;
     use gadget_common::prelude::{DebugLogger, GadgetProtocolMessage, WorkManager};
     use gadget_core::job_manager::WorkManagerInterface;
     use sp_core::{ecdsa, Pair};
@@ -475,7 +476,7 @@ mod tests {
         // Now, send broadcast messages through each topic
         for _network in &networks {
             for (handles, _, _) in &all_handles {
-                for handle in handles {
+                for handle in handles.values() {
                     handle
                         .send_message(dummy_message_broadcast(b"Hello, world".to_vec()))
                         .await
@@ -488,7 +489,7 @@ mod tests {
         for _network in &networks {
             for (handles, _, logger) in &all_handles {
                 logger.debug("Waiting to receive broadcast messages ...");
-                for handle in handles {
+                for handle in handles.values() {
                     let message = handle.next_message().await.unwrap();
                     assert_eq!(message.payload, b"Hello, world");
                     assert_eq!(message.to_network_id, None);
@@ -500,7 +501,7 @@ mod tests {
         // Next, send P2P messages: everybody sends a message to everybody
         for _network in networks.iter() {
             for (handles, _, _) in all_handles.iter() {
-                for (my_idx, handle) in handles.iter().enumerate() {
+                for (my_idx, handle) in handles.values().enumerate() {
                     let send_idxs = send_idxs
                         .iter()
                         .filter(|&&idx| idx != my_idx)
@@ -520,7 +521,7 @@ mod tests {
         for _network in networks.iter() {
             for (handles, _, logger) in all_handles.iter() {
                 logger.debug("Waiting to receive P2P messages ...");
-                for (my_idx, handle) in handles.iter().enumerate() {
+                for (my_idx, handle) in handles.values().enumerate() {
                     // Each party should receive two messages
                     for _ in 0..2 {
                         let message = handle.next_message().await.unwrap();

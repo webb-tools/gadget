@@ -8,6 +8,7 @@ edition = "2021"
 [dependencies]
 
 gadget-core = { workspace = true }
+gadget-common = { workspace = true }
 log = { workspace = true }
 parking_lot = { workspace = true }
 serde = { workspace = true, features = ["derive"] }
@@ -29,6 +30,7 @@ ark-ec = { version = "*"}
 ark-bls12-377 = { version = "*", features = ["curve"] }
 ark-ff = { version = "*"}
 ark-poly = { version = "*"}
-bincode2 = "2.0.1"
+bincode = { workspace = true }
+serde_json = { workspace = true }
 hex = "0.4.3"
 md5 = "0.7.0"

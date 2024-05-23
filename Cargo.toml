@@ -21,18 +21,18 @@ shell-manager = { path = "./shell-manager" }
 
 snowbridge-milagro-bls = { git = "https://github.com/Snowfork/milagro_bls", default-features = false, rev = "43a5d480ed6e3b83de4cf54888680d51604199e6" }
 gennaro-dkg = { git = "https://github.com/mikelodder7/gennaro-dkg.git", default-features = false, rev = "1c15242" }
-pallet-jobs-rpc-runtime-api = { git = "https://github.com/webb-tools/tangle.git", branch = "main" }
-pallet-jobs = { git = "https://github.com/webb-tools/tangle.git", branch = "main" }
-pallet-dkg = { git = "https://github.com/webb-tools/tangle.git", branch = "main" }
-pallet-zksaas = { git = "https://github.com/webb-tools/tangle.git", branch = "main" }
-tangle-primitives = { git = "https://github.com/webb-tools/tangle.git", branch = "main" }
-tangle-subxt = { git = "https://github.com/webb-tools/tangle.git", default-features = false, branch = "main" }
-#pallet-jobs-rpc-runtime-api = { path = "../tangle/pallets/jobs/rpc/runtime-api", default-features = false }
-#pallet-jobs = { path = "../tangle/pallets/jobs", default-features = false }
-#pallet-dkg = { path = "../tangle/pallets/dkg", default-features = false }
-#pallet-zksaas = { path = "../tangle/pallets/zksaas", default-features = false }
-#tangle-primitives = { path = "../tangle/primitives", default-features = false }
-#tangle-subxt = { path = "../tangle/tangle-subxt", default-features = false }
+#pallet-jobs-rpc-runtime-api = { git = "https://github.com/webb-tools/tangle.git", default-features = false, branch = "donovan/browser-gadget" }
+#pallet-jobs = { git = "https://github.com/webb-tools/tangle.git", default-features = false, branch = "donovan/browser-gadget" }
+#pallet-dkg = { git = "https://github.com/webb-tools/tangle.git", branch = "donovan/browser-gadget" }
+#pallet-zksaas = { git = "https://github.com/webb-tools/tangle.git", branch = "donovan/browser-gadget" }
+#tangle-primitives = { git = "https://github.com/webb-tools/tangle.git", branch = "donovan/browser-gadget" }
+#tangle-subxt = { git = "https://github.com/webb-tools/tangle.git", default-features = false, branch = "donovan/browser-gadget" }
+pallet-jobs-rpc-runtime-api = { path = "../tangle/pallets/jobs/rpc/runtime-api", default-features = false }
+pallet-jobs = { path = "../tangle/pallets/jobs", default-features = false }
+pallet-dkg = { path = "../tangle/pallets/dkg", default-features = false }
+pallet-zksaas = { path = "../tangle/pallets/zksaas", default-features = false }
+tangle-primitives = { path = "../tangle/primitives", default-features = false }
+tangle-subxt = { path = "../tangle/tangle-subxt", default-features = false }
 subxt-signer = { version = "0.34.0", default-features = false }
 subxt = { version = "0.34.0", default-features = false }
 

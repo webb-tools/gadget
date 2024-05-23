@@ -35,7 +35,7 @@ tracing-subscriber = { git = "https://github.com/tokio-rs/tracing", default-feat
 tracing-core = { git = "https://github.com/tokio-rs/tracing", default-features = false, features = ["alloc"] }
 
 # Substrate
-tangle-subxt = { workspace = true, optional = true }
+tangle-subxt = { workspace = true, optional = true, default-features = false }
 subxt-signer = { workspace = true, default-features = false, features = ["subxt", "sr25519"], optional = true }
 subxt = { workspace = true, optional = true, default-features = false }
 sp-api = { workspace = true, optional = true, default-features = false }
@@ -62,7 +62,7 @@ tangle-mainnet = []
 substrate = [
   "gadget-core/substrate",
   "gadget-io/default",
-  "tangle-subxt",
+  "tangle-subxt/std",
   "subxt-signer/native",
   "subxt/native",
   "subxt/jsonrpsee",
@@ -95,6 +95,7 @@ wasm = [
   "tracing/alloc",
   "getrandom/js",
   "gadget-core/substrate",
+  "tangle-subxt/wasm",
   "subxt-signer/web",
   "subxt/web",
   "subxt/jsonrpsee",

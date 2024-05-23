@@ -8,11 +8,13 @@ edition = "2021"
 [features]
 default = ["std"]
 std = [
+    "tangle-subxt/std",
     "shell-sdk/std",
     "gadget-common/std",
     "gadget-io/std"
 ]
 wasm = [
+    "tangle-subxt/std",
     "shell-sdk/wasm",
     "gadget-common/wasm",
     "gadget-io/wasm"
@@ -29,7 +31,7 @@ tracing = { workspace = true, features = ["log"] }
 tracing-subscriber = { workspace = true, features = ["env-filter", "ansi"] }
 rand = { workspace = true }
 structopt = { workspace = true }
-tangle-subxt = { workspace = true }
+tangle-subxt = { workspace = true, default-features = false }
 toml = "0.8.11"
 hex = { workspace = true }
 tokio = { workspace = true, features = ["process", "io-util", "signal"] }

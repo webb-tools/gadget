@@ -1,4 +1,5 @@
 use crate::utils::{deserialize, serialize};
+#[cfg(not(feature = "wasm"))]
 use crate::Error;
 use async_trait::async_trait;
 use parking_lot::RwLock;

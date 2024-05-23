@@ -1,5 +1,5 @@
 use serde::{Deserialize, Serialize};
-use std::{fmt::Display, path::PathBuf, str::FromStr};
+use std::{fmt::Display, path::PathBuf, str::FromStr, net::IpAddr};
 use tsify::Tsify;
 use wasm_bindgen::prelude::*;
 
@@ -39,7 +39,7 @@ pub struct ShellTomlConfig {
     /// The RPC URL of the Tangle Node.
     pub url: url::Url,
     /// The List of bootnodes to connect to
-    pub bootnodes: Vec<Multiaddr>,
+    pub bootnodes: Vec<String>,
     /// The node key in hex format. If not provided, a random node key will be generated.
     pub node_key: Option<String>,
     /// The base path to store the shell-sdk data, and read data from the keystore.

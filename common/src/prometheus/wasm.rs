@@ -1,4 +1,3 @@
-use prometheus::IntCounter;
 use std::net::SocketAddr;
 
 #[derive(Debug, Clone)]

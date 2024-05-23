@@ -5,17 +5,27 @@ authors = ["Thomas Braun <tbraun96@gmail.com>"]
 license = "GPL-3.0-or-later WITH Classpath-exception-2.0"
 edition = "2021"
 
+[lib]
+crate-type = ["cdylib", "rlib"]
+
 [features]
 default = ["std"]
 std = [
+  "tangle-subxt/std",
+  "pallet-jobs/std",
+  "pallet-jobs-rpc-runtime-api/std",
   "gadget-common/default",
   "gadget-io/default",
   "sc-keystore",
   "sp-core/default",
   "sp-io/default",
   "sp-application-crypto/default",
+  "parity-scale-codec/default",
 ]
 wasm = [
+  "tangle-subxt/wasm",
+  "pallet-jobs/wasm",
+  "pallet-jobs-rpc-runtime-api/wasm",
   "gadget-common/wasm",
   "gadget-io/wasm",
   "sp-core/serde",
@@ -25,6 +35,7 @@ wasm = [
   "sp-io/disable_allocator",
   "sp-application-crypto/serde",
   "sp-application-crypto/full_crypto",
+  "parity-scale-codec/serde",
   "wasm-bindgen",
   "getrandom/js",
   "wasm-bindgen-futures",
@@ -62,7 +73,7 @@ sp-core = { workspace = true, default-features = false }
 sp-io = { workspace = true, default-features = false }
 sp-keystore = { workspace = true }
 sp-application-crypto = { workspace = true, default-features = false }
-tangle-subxt = { workspace = true }
+tangle-subxt = { workspace = true, default-features = false }
 scale-info = { workspace = true }
 parity-scale-codec = { workspace = true }
 color-eyre = { version = "0.6", features = ["tracing-error", "color-spantrace", "issue-url"] }
@@ -82,8 +93,8 @@ itertools = { workspace = true }
 env_logger = { workspace = true }
 
 # Pallets
-pallet-jobs-rpc-runtime-api = { workspace = true, features = ["default"] }
-pallet-jobs = { workspace = true, features = ["default"] }
+pallet-jobs-rpc-runtime-api = { workspace = true, default-features = false }
+pallet-jobs = { workspace = true, default-features = false }
 pallet-dkg = { workspace = true }
 pallet-zksaas = { workspace = true }
 tangle-primitives = { workspace = true }

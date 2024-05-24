@@ -1,13 +1,20 @@
-use crate::shell::ShellNodeInput;
-use gadget_common::prelude::{DebugLogger, KeystoreBackend};
-use gadget_core::job_manager::SendFuture;
-use gadget_io::{defaults, ShellTomlConfig, SupportedChains};
-use structopt::StructOpt;
-use tangle_subxt::tangle_testnet_runtime::api::jobs::events::job_refunded::RoleType;
+#[cfg(not(feature = "wasm"))]
+use gadget_io::SupportedChains;
 use tracing_subscriber::fmt::SubscriberBuilder;
 use tracing_subscriber::util::SubscriberInitExt;
 use tracing_subscriber::EnvFilter;
 
+#[cfg(not(feature = "wasm"))]
+use {
+    crate::shell::ShellNodeInput,
+    gadget_common::prelude::{DebugLogger, KeystoreBackend},
+    gadget_core::job_manager::SendFuture,
+    gadget_io::{defaults, ShellTomlConfig},
+    structopt::StructOpt,
+    tangle_subxt::tangle_testnet_runtime::api::jobs::events::job_refunded::RoleType,
+};
+
+#[cfg(not(feature = "wasm"))]
 pub fn keystore_from_base_path(
     base_path: &std::path::Path,
     chain: SupportedChains,
@@ -23,6 +30,7 @@ pub fn keystore_from_base_path(
 }
 
 /// Runs a shell for a given protocol.
+#[cfg(not(feature = "wasm"))]
 pub async fn run_shell_for_protocol<
     KBE: KeystoreBackend,
     T: FnOnce(ShellNodeInput<KBE>) -> F,

@@ -1,8 +1,9 @@
-use color_eyre::Result;
+pub use crate::shared::shell::defaults;
 use libp2p::Multiaddr;
 use serde::{Deserialize, Serialize};
 use std::{fmt::Display, net::IpAddr, path::PathBuf, str::FromStr};
 use structopt::StructOpt;
+use crate::shared::shell::parse_node_key;
 
 #[derive(Debug, StructOpt)]
 #[structopt(
@@ -115,39 +116,4 @@ pub struct ShellTomlConfig {
     /// Whether to use pretty logging
     #[structopt(global = true, long)]
     pub pretty: bool,
-}
-
-pub mod defaults {
-    pub const BIND_PORT: &str = "30555";
-    pub const BIND_IP: &str = "0.0.0.0";
-    pub const RPC_URL: &str = "ws://127.0.0.1:9944";
-
-    pub fn rpc_url() -> url::Url {
-        url::Url::parse(RPC_URL).expect("Default RPC URL is valid")
-    }
-
-    pub fn bind_ip() -> std::net::IpAddr {
-        BIND_IP.parse().expect("Default bind IP is valid")
-    }
-
-    pub fn bind_port() -> u16 {
-        BIND_PORT.parse().expect("Default bind port is valid")
-    }
-
-    /// Generates a random node key
-    pub fn generate_node_key() -> [u8; 32] {
-        use rand::Rng;
-
-        let mut rng = rand::thread_rng();
-        let mut array = [0u8; 32];
-        rng.fill(&mut array);
-        array
-    }
-}
-
-fn parse_node_key(s: &str) -> Result<String> {
-    let result: [u8; 32] = hex::decode(s.replace("0x", ""))?.try_into().map_err(|_| {
-        color_eyre::eyre::eyre!("Invalid node key length, expect 32 bytes hex string")
-    })?;
-    Ok(hex::encode(result))
 }

@@ -1,7 +1,9 @@
-#[cfg(not(target_family = "wasm"))]
+#[cfg(not(feature = "wasm"))]
 pub mod gossip;
-#[cfg(not(target_family = "wasm"))]
+#[cfg(not(feature = "wasm"))]
 pub mod handlers;
-#[cfg(target_family = "wasm")]
+#[cfg(feature = "wasm")]
 pub mod matchbox;
+#[cfg(not(feature = "wasm"))]
 pub mod setup;
+pub mod network;

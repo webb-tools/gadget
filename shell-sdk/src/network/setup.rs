@@ -1,18 +1,6 @@
 use crate::config::ShellConfig;
-#[cfg(not(target_family = "wasm"))]
-use crate::network::gossip::{
-    GossipHandle, IntraNodePayload, MyBehaviour, NetworkServiceWithoutSwarm, MAX_MESSAGE_SIZE,
-};
-use crate::shell::{AGENT_VERSION, CLIENT_VERSION};
 use futures::StreamExt;
 use gadget_common::config::DebugLogger;
-
-#[cfg(not(target_family = "wasm"))]
-use libp2p::{
-    gossipsub, gossipsub::IdentTopic, kad::store::MemoryStore, mdns, request_response,
-    swarm::dial_opts::DialOpts, StreamProtocol,
-};
-
 use gadget_common::prelude::KeystoreBackend;
 use gadget_io::tokio::select;
 use gadget_io::tokio::sync::{Mutex, RwLock};
@@ -26,9 +14,19 @@ use std::str::FromStr;
 use std::sync::atomic::AtomicU32;
 use std::sync::Arc;
 use std::time::Duration;
+#[cfg(not(feature = "wasm"))]
+use crate::{
+    network::gossip::{GossipHandle, IntraNodePayload, MyBehaviour, NetworkServiceWithoutSwarm, MAX_MESSAGE_SIZE},
+    shell::{AGENT_VERSION, CLIENT_VERSION}
+};
+#[cfg(not(feature = "wasm"))]
+use libp2p::{
+    gossipsub, gossipsub::IdentTopic, kad::store::MemoryStore, mdns, request_response,
+    swarm::dial_opts::DialOpts, StreamProtocol,
+};
 
 #[allow(clippy::collapsible_else_if)]
-#[cfg(not(target_family = "wasm"))]
+#[cfg(not(feature = "wasm"))]
 pub async fn setup_libp2p_network<KBE: KeystoreBackend>(
     identity: libp2p::identity::Keypair,
     config: &ShellConfig<KBE>,

@@ -1,5 +1,5 @@
+#![allow(dead_code)]
 use crate::network::matchbox::MatchboxEvent::P2p;
-use crate::network::network::NetworkHandle;
 use gadget_common::{debug_logger::DebugLogger, prelude::*};
 use gadget_io::tokio::sync::{Mutex, RwLock};
 use matchbox_socket::PeerId;
@@ -9,6 +9,7 @@ use std::{
     collections::HashMap,
     sync::{atomic::AtomicU32, Arc},
 };
+use crate::network::network::NetworkHandle;
 
 pub type InboundMapping = (String, UnboundedSender<Vec<u8>>, Arc<AtomicU32>);
 
@@ -23,12 +24,12 @@ pub struct MatchboxNetworkService<'a> {
 
 impl<'a> MatchboxNetworkService<'a> {
     /// Handle local requests that are meant to be sent to the network.
-    pub(crate) fn handle_intra_node_payload(&mut self, _msg: IntraNodeWebPayload) {
+    pub fn handle_intra_node_payload(&mut self, _msg: IntraNodeWebPayload) {
         // TODO: Handle Payload
     }
 
     /// Handle inbound events from the networking layer
-    pub(crate) async fn handle_matchbox_event(&mut self, event: MatchboxEvent) {
+    pub async fn handle_matchbox_event(&mut self, event: MatchboxEvent) {
         let _enter = self.span.enter();
         match event {
             P2p { peer_id: _ } => {}

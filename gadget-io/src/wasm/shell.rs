@@ -1,3 +1,4 @@
+pub use crate::shared::shell::defaults;
 use serde::{Deserialize, Serialize};
 use std::{fmt::Display, path::PathBuf, str::FromStr, net::IpAddr};
 use tsify::Tsify;

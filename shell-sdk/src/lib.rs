@@ -2,14 +2,18 @@ pub mod config;
 pub mod entry;
 pub mod keystore;
 pub mod network;
+#[cfg(not(feature = "wasm"))]
 pub mod shell;
 pub mod tangle;
 
 pub use config::*;
-pub use entry::run_shell_for_protocol;
 pub use gadget_common::prelude::*;
 pub use gadget_core::gadget::substrate::Client;
-pub use shell::generate_node_input;
+#[cfg(not(feature = "wasm"))]
+pub use {
+    shell::generate_node_input,
+    entry::run_shell_for_protocol,
+};
 
 pub mod prelude {
     pub use crate::async_trait;

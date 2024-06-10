@@ -1,0 +1,5 @@
+error: expected `,`
+ --> tests/invalid_cases/job/04_invalid_result_syntax.rs:3:33
+  |
+3 | #[job(params(n), result(Vec<u8> String))]
+  |                                 ^^^^^^

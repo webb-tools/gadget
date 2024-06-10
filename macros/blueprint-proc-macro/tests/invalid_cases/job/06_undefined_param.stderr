@@ -1,0 +1,5 @@
+error: parameter not declared in the function
+ --> tests/invalid_cases/job/06_undefined_param.rs:3:17
+  |
+3 | #[job(params(n, t), result(Vec<u8>))]
+  |                 ^

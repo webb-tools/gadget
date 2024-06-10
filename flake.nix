@@ -30,6 +30,7 @@
             pkgs.pkg-config
             pkgs.clang
             pkgs.libclang.lib
+            pkgs.openssl.dev
             pkgs.gmp
             # Protocol Buffers
             pkgs.protobuf
@@ -52,7 +53,7 @@
           ];
           # Environment variables
           RUST_SRC_PATH = "${toolchain}/lib/rustlib/src/rust/library";
-          LD_LIBRARY_PATH = lib.makeLibraryPath [ pkgs.gmp pkgs.libclang ];
+          LD_LIBRARY_PATH = lib.makeLibraryPath [ pkgs.gmp pkgs.libclang pkgs.openssl.dev ];
         };
       });
 }

@@ -9,6 +9,9 @@ members = [
     "shell-manager",
     "shell-sdk",
     "sdk",
+    "macros/blueprint-proc-macro",
+    "macros/blueprint-proc-macro-core",
+    "macros/blueprint-proc-macro-playground",
 ]
 
 [workspace.package]
@@ -26,6 +29,9 @@ test-utils = { path = "./test-utils" }
 protocol-macros = { path = "./protocol-macros" }
 shell-sdk = { path = "./shell-sdk", default-features = false }
 shell-manager = { path = "./shell-manager" }
+
+gadget-blueprint-proc-macro = { path = "./macros/blueprint-proc-macro" }
+gadget-blueprint-proc-macro-core = { path = "./macros/blueprint-proc-macro-core" }
 
 snowbridge-milagro-bls = { git = "https://github.com/Snowfork/milagro_bls", default-features = false, rev = "43a5d480ed6e3b83de4cf54888680d51604199e6" }
 gennaro-dkg = { git = "https://github.com/mikelodder7/gennaro-dkg.git", default-features = false, rev = "1c15242" }

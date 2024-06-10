@@ -1,0 +1,22 @@
+[package]
+name = "gadget-blueprint-proc-macro"
+version = "0.1.0"
+authors.workspace = true
+edition.workspace = true
+license.workspace = true
+homepage.workspace = true
+repository.workspace = true
+
+[lib]
+proc-macro = true
+
+[dependencies]
+syn = { version = "2.0", features = ["full"] }
+quote = "1.0"
+proc-macro2 = "1.0"
+ron = "0.8"
+serde_json = { workspace = true }
+gadget-blueprint-proc-macro-core = { workspace = true }
+
+[dev-dependencies]
+trybuild = "1.0"

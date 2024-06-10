@@ -1,0 +1,11 @@
+[package]
+name = "gadget-blueprint-proc-macro-playground"
+version = "0.1.0"
+authors.workspace = true
+edition.workspace = true
+license.workspace = true
+homepage.workspace = true
+repository.workspace = true
+
+[dependencies]
+gadget-blueprint-proc-macro = { workspace = true }

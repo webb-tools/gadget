@@ -52,8 +52,8 @@ substrate-prometheus-endpoint = { workspace = true, optional = true, default-fea
 frame-support = { workspace = true, optional = true, default-features = false }
 linked-hash-map = { workspace = true, optional = true, default-features = false }
 
-parity-scale-codec = { workspace = true, optional = true, default-features = false }
-scale-info = { workspace = true, optional = true, default-features = false, features = ["derive"] }
+parity-scale-codec = { workspace = true, optional = true }
+scale-info = { workspace = true, optional = true }
 thiserror = { workspace = true }
 
 [features]

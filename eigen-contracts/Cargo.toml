@@ -1,0 +1,11 @@
+[package]
+name = "eigen-contracts"
+description = "EigenLayer Solidity contract"
+version = "0.1.0"
+authors = ["Webb Developers <hello@webb.tools>"]
+license = "GPL-3.0-or-later WITH Classpath-exception-2.0"
+edition = "2021"
+
+[dependencies]
+alloy-sol-types = { workspace = true, features = ["json"] }
+alloy-contract.workspace = true

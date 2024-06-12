@@ -1,0 +1,35 @@
+[package]
+name = "fireblocks-client"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+async-trait.workspace = true
+regex.workspace = true
+anyhow.workspace = true
+thiserror.workspace = true
+tracing.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+num-bigint.workspace = true
+reqwest = { workspace = true, features = ["json"] }
+tree_magic_mini.workspace = true
+tokio.workspace = true
+hex.workspace = true
+futures.workspace = true
+jsonwebtoken.workspace = true
+uuid = { workspace = true, features = ["v4"] }
+log.workspace = true
+sha2.workspace = true
+rsa.workspace = true
+pretty_env_logger.workspace = true
+
+alloy-provider.workspace = true
+alloy-primitives = { workspace = true, features = ["serde"] }
+alloy-transport.workspace = true
+alloy-network.workspace = true
+alloy-transport-ws.workspace = true
+alloy-consensus.workspace = true
+alloy-rpc-types.workspace = true

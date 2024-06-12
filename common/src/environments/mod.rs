@@ -40,10 +40,10 @@ where
 
     #[allow(clippy::too_many_arguments)]
     fn build_protocol_message<Payload: Serialize>(
-        associated_block_id: <Self::WorkManager as WorkManagerInterface>::Clock,
-        associated_session_id: <Self::WorkManager as WorkManagerInterface>::SessionID,
-        associated_retry_id: <Self::WorkManager as WorkManagerInterface>::RetryID,
-        associated_task_id: <Self::WorkManager as WorkManagerInterface>::TaskID,
+        associated_block_id: Self::Clock,
+        associated_session_id: Self::SessionID,
+        associated_retry_id: Self::RetryID,
+        associated_task_id: Self::TaskID,
         from: u16,
         to: Option<u16>,
         payload: &Payload,
@@ -72,10 +72,10 @@ impl GadgetEnvironment for TangleEnvironment {
     type TransactionManager = TangleTransactionManager;
 
     fn build_protocol_message<Payload: Serialize>(
-        associated_block_id: <Self::WorkManager as WorkManagerInterface>::Clock,
-        associated_session_id: <Self::WorkManager as WorkManagerInterface>::SessionID,
-        associated_retry_id: <Self::WorkManager as WorkManagerInterface>::RetryID,
-        associated_task_id: <Self::WorkManager as WorkManagerInterface>::TaskID,
+        associated_block_id: Self::Clock,
+        associated_session_id: Self::SessionID,
+        associated_retry_id: Self::RetryID,
+        associated_task_id: Self::TaskID,
         from: UserID,
         to: Option<UserID>,
         payload: &Payload,

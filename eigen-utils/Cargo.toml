@@ -1,0 +1,52 @@
+[package]
+name = "eigen-utils"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+async-trait.workspace = true
+alloy-primitives.workspace = true
+alloy-provider.workspace = true
+alloy-sol-types = { workspace = true, features = ["json"] }
+alloy-transport-http.workspace = true
+alloy-rpc-types.workspace = true
+alloy-pubsub.workspace = true
+eigen-contracts.workspace = true
+hyper = { workspace = true, features = ["full"] }
+regex.workspace = true
+chacha20poly1305.workspace = true
+anyhow.workspace = true
+pin-project-lite.workspace = true
+http-body-util.workspace = true
+thiserror.workspace = true
+tracing.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+num-bigint.workspace = true
+reqwest.workspace = true
+tree_magic_mini.workspace = true
+tokio.workspace = true
+hex.workspace = true
+futures.workspace = true
+log.workspace = true
+alloy-contract.workspace = true
+alloy-consensus.workspace = true
+alloy-eips.workspace = true
+alloy-transport.workspace = true
+alloy-network.workspace = true
+alloy-transport-ws.workspace = true
+alloy-signer-wallet.workspace = true
+alloy-signer.workspace = true
+scrypt.workspace = true
+
+ark-bn254.workspace = true
+ark-std.workspace = true
+ark-ff.workspace = true
+ark-ec.workspace = true
+ark-serialize.workspace = true
+ark-inner-products.workspace = true
+
+base64.workspace = true
+rand.workspace = true

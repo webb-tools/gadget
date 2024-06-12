@@ -220,8 +220,8 @@ trait MetricizedJob: ExecutableJob {
         let job2 = job.clone();
         let job3 = job.clone();
         let job4 = job.clone();
-        let tokio_metrics = gadget_io::tokio::runtime::Handle::current().metrics();
-        crate::prometheus::TOKIO_ACTIVE_TASKS.set(tokio_metrics.active_tasks_count() as f64);
+        let _tokio_metrics = gadget_io::tokio::runtime::Handle::current().metrics();
+        // crate::prometheus::TOKIO_ACTIVE_TASKS.set(tokio_metrics.active_tasks_count() as f64);
         let now_init = Arc::new(Mutex::new(None));
         let now_clone = now_init.clone();
         let now_clone2 = now_init.clone();

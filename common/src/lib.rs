@@ -22,6 +22,7 @@ pub mod environments;
 use crate::environments::GadgetEnvironment;
 use gadget_core::gadget::general::Client;
 pub mod transaction_manager;
+
 #[allow(ambiguous_glob_reexports)]
 pub mod prelude {
     pub use crate::client::*;
@@ -233,7 +234,7 @@ async fn get_latest_event_from_client<Env: GadgetEnvironment>(
 /// Also generates a setup_node function that sets up the future that runs all the protocols concurrently
 #[allow(clippy::crate_in_macro_def)]
 macro_rules! generate_setup_and_run_command {
-    ($( $config:ident ),*) => {
+    ($env:ty, $( $config:ident ),*) => {
         /// Sets up a future that runs all the protocols concurrently
         pub fn setup_node<Env: GadgetEnvironment, N: Network<Env>, KBE: $crate::keystore::KeystoreBackend, D: Send + Clone + 'static>(node_input: NodeInput<Env, N, KBE, D>) -> impl SendFuture<'static, ()>
         {
@@ -287,7 +288,7 @@ macro_rules! generate_setup_and_run_command {
 
 #[macro_export]
 macro_rules! generate_protocol {
-    ($name:expr, $struct_name:ident, $async_proto_params:ty, $proto_gen_path:expr, $create_job_path:expr, $phase_filter:pat, $( $role_filter:pat ),*) => {
+    ($env:ty, $name:expr, $struct_name:ident, $async_proto_params:ty, $proto_gen_path:expr, $create_job_path:expr, $phase_filter:pat, $( $role_filter:pat ),*) => {
         #[protocol]
         pub struct $struct_name<
             Env: GadgetEnvironment,

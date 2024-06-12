@@ -1,0 +1,38 @@
+[package]
+name = "eigen-tangle-avs"
+version = "0.1.0"
+authors.workspace = true
+edition.workspace = true
+license.workspace = true
+homepage.workspace = true
+repository.workspace = true
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+alloy-contract.workspace = true
+alloy-primitives.workspace = true
+alloy-provider.workspace = true
+alloy-pubsub.workspace = true
+alloy-rpc-client.workspace = true
+alloy-rpc-types.workspace = true
+alloy-sol-types.workspace = true
+alloy-signer.workspace = true
+alloy-signer-wallet = { workspace = true, features = ["keystore"] }
+alloy-transport-http.workspace = true
+alloy-transport-ws.workspace = true
+alloy-transport.workspace = true
+async-trait.workspace = true
+aws-sdk-kms.workspace = true
+
+eigen-contracts.workspace = true
+eigen-utils.workspace = true
+gadget-aws-kms.workspace = true
+
+hex.workspace = true
+k256.workspace = true
+log.workspace = true
+prometheus.workspace = true
+reqwest.workspace = true
+thiserror.workspace = true
+tokio.workspace = true

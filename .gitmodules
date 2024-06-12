@@ -1,0 +1,30 @@
+[submodule "eigen-contracts/lib/forge-std"]
+	path = eigen-contracts/lib/forge-std
+	url = https://github.com/foundry-rs/forge-std
+[submodule "eigen-contracts/lib/eigenlayer-middleware"]
+	path = eigen-contracts/lib/eigenlayer-middleware
+	url = https://github.com/Layr-Labs/eigenlayer-middleware
+[submodule "eigen-contracts/lib/eigenlayer-contracts"]
+	path = eigen-contracts/lib/eigenlayer-contracts
+	url = https://github.com/Layr-Labs/eigenlayer-contracts
+[submodule "eigen-gadget/lib/forge-std"]
+	path = eigen-gadget/lib/forge-std
+	url = https://github.com/foundry-rs/forge-std
+[submodule "eigen-gadget/lib/eigenlayer-middleware"]
+	path = eigen-gadget/lib/eigenlayer-middleware
+	url = https://github.com/Layr-Labs/eigenlayer-middleware
+[submodule "eigen-gadget/contracts/lib/forge-std"]
+	path = eigen-gadget/contracts/lib/forge-std
+	url = https://github.com/foundry-rs/forge-std
+[submodule "eigen-gadget/contracts/lib/eigenlayer-middleware"]
+	path = eigen-gadget/contracts/lib/eigenlayer-middleware
+	url = https://github.com/Layr-Labs/eigenlayer-middleware
+[submodule "eigen-tangle-avs/lib/forge-std"]
+	path = eigen-tangle-avs/lib/forge-std
+	url = https://github.com/foundry-rs/forge-std
+[submodule "eigen-tangle-avs/contracts/lib/forge-std"]
+	path = eigen-tangle-avs/contracts/lib/forge-std
+	url = https://github.com/foundry-rs/forge-std
+[submodule "eigen-tangle-avs/contracts/lib/eigenlayer-middleware"]
+	path = eigen-tangle-avs/contracts/lib/eigenlayer-middleware
+	url = https://github.com/Layr-Labs/eigenlayer-middleware

@@ -1,4 +1,4 @@
-use slog::{debug, error, info, warn};
+use slog::{debug, error, info, trace, warn};
 
 use super::Logger;
 
@@ -20,16 +20,20 @@ impl Logger for SlogLogger {
         custom_log!(debug, self.logger, target, message, tags);
     }
 
+    fn error(&self, target: &str, message: &str, tags: &[&str]) {
+        custom_log!(error, self.logger, target, message, tags);
+    }
+
     fn info(&self, target: &str, message: &str, tags: &[&str]) {
         custom_log!(info, self.logger, target, message, tags);
     }
 
-    fn warn(&self, target: &str, message: &str, tags: &[&str]) {
-        custom_log!(warn, self.logger, target, message, tags);
+    fn trace(&self, target: &str, message: &str, tags: &[&str]) {
+        custom_log!(trace, self.logger, target, message, tags);
     }
 
-    fn error(&self, target: &str, message: &str, tags: &[&str]) {
-        custom_log!(error, self.logger, target, message, tags);
+    fn warn(&self, target: &str, message: &str, tags: &[&str]) {
+        custom_log!(warn, self.logger, target, message, tags);
     }
 }
 #[cfg(test)]
@@ -49,6 +53,10 @@ mod test {
         let logger = SlogLogger {
             logger: inner_logger,
         };
-        logger.debug("my_target", "Hello, world!", &["tag1", "tag2"]);
+        logger.debug("test_target", "Debug Test", &["tag1", "tag2"]);
+        logger.trace("test_target", "Trace Test", &["tag1", "tag2"]);
+        logger.info("test_target", "Info Test", &["tag1", "tag2"]);
+        logger.warn("test_target", "Warn Test", &["tag1", "tag2"]);
+        logger.error("test_target", "Error Test", &["tag1", "tag2"]);
     }
 }

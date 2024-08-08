@@ -39,15 +39,3 @@ pub mod prelude {
     pub use tangle_primitives;
     pub use tangle_subxt;
 }
-
-/// Should be put inside the lib file of the protocol repository
-#[macro_export]
-macro_rules! generate_shell_binary {
-    ($entry_point:path, $keystore:path, $n_protocols:expr, $($role_type:expr),*) => {
-        #[gadget_io::tokio::main]
-        async fn main() -> color_eyre::Result<()> {
-            $crate::run_shell_for_protocol(vec![$($role_type),*], $n_protocols, $keystore, $entry_point).await?;
-            Ok(())
-        }
-    };
-}

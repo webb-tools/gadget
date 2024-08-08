@@ -41,7 +41,7 @@ jobs:
             package: [
               gadget-core,
               gadget-common,
-              shell-manager,
+              blueprint-manager,
               shell-sdk,
             ]
     steps:
@@ -72,7 +72,7 @@ jobs:
             package: [
               gadget-core,
               gadget-common,
-              shell-manager,
+              blueprint-manager,
               shell-sdk,
             ]
     steps:

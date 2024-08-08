@@ -13,7 +13,7 @@ pub use wasm::{
 #[cfg(not(target_family = "wasm"))]
 pub use standard::{
     keystore::{KeystoreConfig, KeystoreContainer, SubstrateKeystore},
-    shell::{defaults, Opt, ShellTomlConfig, SupportedChains},
+    shell::{defaults, GadgetConfig, Opt, SupportedChains},
 };
 
 #[cfg(target_family = "wasm")]

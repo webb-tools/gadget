@@ -1,8 +1,8 @@
-use crate::config::ShellManagerOpts;
+use crate::config::BlueprintManagerConfig;
 use crate::protocols::resolver::NativeGithubMetadata;
 use gadget_common::config::DebugLogger;
 use gadget_common::tangle_runtime::AccountId32;
-use gadget_io::{defaults, ShellTomlConfig};
+use gadget_io::{defaults, GadgetConfig};
 use sha2::Digest;
 use sp_core::H256;
 use std::path::Path;
@@ -47,8 +47,8 @@ pub fn github_fetcher_to_native_github_metadata(
 }
 
 pub fn generate_process_arguments(
-    shell_config: &ShellTomlConfig,
-    opt: &ShellManagerOpts,
+    shell_config: &GadgetConfig,
+    opt: &BlueprintManagerConfig,
     blueprint_id: u64,
     service_id: u64,
 ) -> color_eyre::Result<Vec<String>> {

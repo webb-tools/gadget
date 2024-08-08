@@ -4,11 +4,11 @@ use std::time::Duration;
 use crate::gadget::TangleEvent;
 use gadget_common::locks::TokioMutexExt;
 use gadget_common::tangle_subxt::subxt::blocks::{Block, BlockRef};
-use gadget_common::tangle_subxt::subxt::{self, PolkadotConfig};
+use gadget_common::tangle_subxt::subxt::{self, SubstrateConfig};
 use gadget_common::{async_trait, tangle_runtime::*};
 use gadget_core::gadget::general::Client;
 
-pub type TangleConfig = subxt::PolkadotConfig;
+pub type TangleConfig = SubstrateConfig;
 pub type TangleClient = subxt::OnlineClient<TangleConfig>;
 pub type TangleBlock = Block<TangleConfig, TangleClient>;
 pub type TangleBlockStream = subxt::backend::StreamOfResults<TangleBlock>;
@@ -33,7 +33,7 @@ pub mod crypto {
 
 #[derive(Clone)]
 pub struct TangleRuntime {
-    client: subxt::OnlineClient<PolkadotConfig>,
+    client: subxt::OnlineClient<SubstrateConfig>,
     finality_notification_stream:
         Arc<gadget_common::gadget_io::tokio::sync::Mutex<Option<TangleBlockStream>>>,
     latest_finality_notification:
@@ -43,7 +43,7 @@ pub struct TangleRuntime {
 
 impl TangleRuntime {
     /// Create a new TangleRuntime instance.
-    pub fn new(client: subxt::OnlineClient<PolkadotConfig>, account_id: AccountId32) -> Self {
+    pub fn new(client: subxt::OnlineClient<SubstrateConfig>, account_id: AccountId32) -> Self {
         Self {
             client,
             finality_notification_stream: Arc::new(
@@ -56,7 +56,7 @@ impl TangleRuntime {
         }
     }
 
-    pub fn client(&self) -> subxt::OnlineClient<PolkadotConfig> {
+    pub fn client(&self) -> subxt::OnlineClient<SubstrateConfig> {
         self.client.clone()
     }
 

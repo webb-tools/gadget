@@ -28,7 +28,7 @@ tokio = { workspace = true, features = ["rt-multi-thread", "parking_lot"] }
 
 # Logging deps
 log = { workspace = true }
-tracing = { workspace = true, default-features = false }
+tracing = { workspace = true }
 tracing-log = { workspace = true, default-features = false }
 tracing-subscriber = { workspace = true, default-features = false }
 tracing-wasm = { workspace = true, optional = true }

@@ -1,11 +1,11 @@
-use crate::config::ShellManagerOpts;
+use crate::config::BlueprintManagerConfig;
 use crate::gadget::ActiveShells;
 use crate::protocols::resolver::NativeGithubMetadata;
 use crate::utils;
 use crate::utils::get_service_str;
 use color_eyre::eyre::OptionExt;
 use gadget_common::prelude::DebugLogger;
-use gadget_io::ShellTomlConfig;
+use gadget_io::GadgetConfig;
 use std::fmt::Write;
 use tangle_environment::api::RpcServicesWithBlueprint;
 use tangle_subxt::tangle_testnet_runtime::api::runtime_types::tangle_primitives::services::{
@@ -17,8 +17,8 @@ pub async fn maybe_handle(
     blueprints: &Vec<RpcServicesWithBlueprint>,
     onchain_services: &[NativeGithubMetadata],
     onchain_gh_fetchers: &[&GithubFetcher],
-    shell_config: &ShellTomlConfig,
-    shell_manager_opts: &ShellManagerOpts,
+    shell_config: &GadgetConfig,
+    shell_manager_opts: &BlueprintManagerConfig,
     active_shells: &mut ActiveShells,
     logger: &DebugLogger,
 ) -> color_eyre::Result<()> {
@@ -53,8 +53,8 @@ pub async fn maybe_handle(
 async fn handle_github_source(
     blueprints: &Vec<RpcServicesWithBlueprint>,
     service: &NativeGithubMetadata,
-    shell_config: &ShellTomlConfig,
-    shell_manager_opts: &ShellManagerOpts,
+    shell_config: &GadgetConfig,
+    shell_manager_opts: &BlueprintManagerConfig,
     github: &GithubFetcher,
     active_shells: &mut ActiveShells,
     logger: &DebugLogger,

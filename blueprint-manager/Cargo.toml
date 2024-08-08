@@ -1,5 +1,5 @@
 [package]
-name = "shell-manager"
+name = "blueprint-manager"
 version = "0.1.0"
 edition = "2021"
 
@@ -18,6 +18,10 @@ wasm = [
     "gadget-io/wasm"
 ]
 
+[[bin]]
+name = "blueprint-manager"
+path = "src/cli.rs"
+
 [dependencies]
 sp-core = { workspace = true }
 shell-sdk = { workspace = true }
@@ -33,3 +37,4 @@ tokio = { workspace = true, features = ["process", "io-util", "signal"] }
 reqwest = { version = "0.12.3" }
 sha2 = { workspace = true }
 tangle-environment = { workspace = true }
+futures = { workspace = true }

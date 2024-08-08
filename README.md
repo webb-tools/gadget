@@ -50,7 +50,7 @@ cargo build --release
 The gadget shell is a standalone application that provides a command-line interface for interacting with the Gadget and the blockchain. To run the shell, use the following command:
 
 ```bash
-./target/release/shell-manager --protocols-config ./global_protocols.toml --shell-config shell-configs/local-testnet-0.toml -vvv
+./target/release/blueprint-manager --protocols-config ./global_protocols.toml --shell-config shell-configs/local-testnet-0.toml -vvv
 ```
 
 Before running that command, make sure that a [tangle](https://github.com/webb-tools/tangle/) node is running, otherwise, the shell will fail.

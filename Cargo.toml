@@ -9,8 +9,9 @@ members = [
     "environments/tangle",
     "environments/utils",
     "gadget-io",
+    "blueprint-test-utils",
     "protocol-macros",
-    "shell-manager",
+    "blueprint-manager",
     "shell-sdk",
     "sdk",
     # Commented out, since it uses jobs-v1 code
@@ -32,12 +33,12 @@ repository = "https://github.com/webb-tools/gadget"
 gadget-core = { path = "./core", default-features = false }
 gadget-common = { path = "./common", default-features = false }
 gadget-io = { path = "./gadget-io", default-features = false }
-gadget-executor = { path = "./executor", default-features = false }
+gadget-executor = { path = "./executor" }
+blueprint-manager = { path = "./blueprint-manager"}
+blueprint-test-utils = { path = "./blueprint-test-utils" }
 gadget-sdk = { path = "./sdk", default-features = false }
-# tangle-test-utils = { path = "./tangle-test-utils", default-features = false }
-protocol-macros = { path = "./protocol-macros", default-features = false }
+protocol-macros = { path = "./protocol-macros" }
 shell-sdk = { path = "./shell-sdk", default-features = false }
-shell-manager = { path = "./shell-manager", default-features = false }
 tangle-environment = { path = "./environments/tangle", default-features = false }
 environment-utils = { path = "./environments/utils", default-features = false }
 

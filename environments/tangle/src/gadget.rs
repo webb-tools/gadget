@@ -1,6 +1,6 @@
+use crate::runtime::TangleConfig;
 use crate::work_manager::TangleWorkManager;
 use gadget_common::tangle_subxt::subxt::events::Events;
-use gadget_common::tangle_subxt::subxt::PolkadotConfig;
 use gadget_common::WorkManagerInterface;
 
 #[derive(Clone)]
@@ -10,7 +10,7 @@ pub struct TangleEvent {
     /// Finalized block header hash.
     pub hash: [u8; 32],
     /// Events
-    pub events: Events<PolkadotConfig>,
+    pub events: Events<TangleConfig>,
 }
 
 pub struct TangleJobMetadata {

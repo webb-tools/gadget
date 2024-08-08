@@ -22,7 +22,7 @@ pub struct Opt {
     pub pretty: bool,
     /// The options for the shell
     #[structopt(flatten)]
-    pub options: ShellTomlConfig,
+    pub options: GadgetConfig,
 }
 
 #[derive(Copy, Clone, Default, Debug, StructOpt, Serialize, Deserialize)]
@@ -63,7 +63,7 @@ impl Display for SupportedChains {
 
 #[derive(Debug, StructOpt, Serialize, Deserialize)]
 /// All shells should expect this as CLI input. The Shell Manager will be responsible for passing these values to the shell.
-pub struct ShellTomlConfig {
+pub struct GadgetConfig {
     /// The IP address to bind to for the libp2p node.
     #[structopt(long = "bind-ip", short = "i", default_value = defaults::BIND_IP)]
     #[serde(default = "defaults::bind_ip")]

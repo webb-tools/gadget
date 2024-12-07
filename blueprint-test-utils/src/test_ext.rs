@@ -14,12 +14,13 @@
 // You should have received a copy of the GNU General Public License
 // along with Tangle.  If not, see <http://www.gnu.org/licenses/>.
 
+#![allow(clippy::async_yields_async)]
 use crate::PerTestNodeInput;
 use alloy_primitives::hex;
 use futures::StreamExt;
 use blueprint_manager::executor::BlueprintManagerHandle;
 use blueprint_manager::sdk::entry::SendFuture;
-use cargo_tangle::deploy::Opts;
+use cargo_tangle::deploy::{Opts, PrivateKeySigner};
 use gadget_sdk::clients::tangle::runtime::TangleClient;
 use gadget_sdk::tangle_subxt::tangle_testnet_runtime::api::runtime_types::tangle_primitives::services::PriceTargets;
 use gadget_sdk::tangle_subxt::tangle_testnet_runtime::api::services::calls::types::register::{Preferences, RegistrationArgs};
@@ -37,8 +38,12 @@ use subxt::tx::Signer;
 use gadget_sdk::keystore::KeystoreUriSanitizer;
 use sp_core::Pair;
 use tracing::Instrument;
+use gadget_io::SupportedChains;
 use gadget_sdk::{error, info, warn};
 use gadget_sdk::clients::tangle::services::{RpcServicesWithBlueprint, ServicesClient};
+use gadget_sdk::config::{ContextConfig, GadgetConfiguration};
+use gadget_sdk::runners::BlueprintRunner;
+use gadget_sdk::runners::tangle::TangleConfig;
 use gadget_sdk::subxt_core::config::Header;
 use gadget_sdk::utils::test_utils::get_client;
 use crate::tangle::transactions;
@@ -46,30 +51,12 @@ use crate::tangle::transactions;
 const LOCAL_BIND_ADDR: &str = "127.0.0.1";
 pub const NAME_IDS: [&str; 5] = ["Alice", "Bob", "Charlie", "Dave", "Eve"];
 
-/// - `N`: number of nodes
-/// - `K`: Number of networks accessible per node (should be equal to the number of services in a given blueprint)
-/// - `D`: Any data that you want to pass with NodeInput.
-/// - `F`: A function that generates a service's execution via a series of shells. Each shell executes a subset of the service,
-///        as each service may have a set of operations that are executed in parallel, sequentially, or concurrently.
-#[allow(clippy::async_yields_async)]
-pub async fn new_test_ext_blueprint_manager<
-    const N: usize,
-    const K: usize,
-    D: Send + Clone + 'static,
-    F: Fn(PerTestNodeInput<D>) -> Fut,
-    Fut: SendFuture<'static, BlueprintManagerHandle>,
->(
-    additional_params: D,
-    mut opts: Opts,
-    f: F,
-) -> LocalhostTestExt {
-    assert!(N > 0, "At least one node is required");
-    assert!(N <= NAME_IDS.len(), "Only up to 5 nodes are supported");
+/// Initialize network configuration for test nodes
+fn initialize_network_config(n: usize) -> Vec<(Multiaddr, u16)> {
+    assert!(n > 0, "At least one node is required");
+    assert!(n <= NAME_IDS.len(), "Only up to 5 nodes are supported");
 
-    let span = tracing::info_span!("Integration-Test");
-    let _span = span.enter();
-
-    let bind_addrs = (0..N)
+    let bind_addrs = (0..n)
         .map(|_| find_open_tcp_bind_port())
         .map(|port| {
             (
@@ -86,12 +73,23 @@ pub async fn new_test_ext_blueprint_manager<
         bind_addrs.len()
     );
 
-    let multi_addrs = bind_addrs
-        .iter()
-        .map(|(addr, _)| addr.clone())
-        .collect::<Vec<_>>();
+    bind_addrs
+}
 
+/// Initialize blueprint manager handles for each test node
+async fn initialize_handles<
+    D: Send + Clone + 'static,
+    F: Fn(PerTestNodeInput<D>) -> Fut,
+    Fut: SendFuture<'static, BlueprintManagerHandle>,
+>(
+    bind_addrs: &[(Multiaddr, u16)],
+    multi_addrs: Vec<Multiaddr>,
+    additional_params: D,
+    opts: &Opts,
+    f: F,
+) -> (Vec<BlueprintManagerHandle>, Opts) {
     let mut handles = vec![];
+    let mut opts = opts.clone();
 
     for (node_index, (my_addr, my_port)) in bind_addrs.iter().enumerate() {
         let test_input = PerTestNodeInput {
@@ -132,56 +130,55 @@ pub async fn new_test_ext_blueprint_manager<
         handles.push(handle);
     }
 
-    let local_tangle_node_ws = opts.ws_rpc_url.clone();
-    let local_tangle_node_http = opts.http_rpc_url.clone();
+    (handles, opts)
+}
 
-    let client = get_client(&local_tangle_node_ws, &local_tangle_node_http)
+/// Deploy or retrieve MBSM (Master Blueprint Service Manager)
+async fn deploy_or_get_mbsm(
+    client: &TangleClient,
+    local_tangle_node_ws: &str,
+    handle: &BlueprintManagerHandle,
+    signer_evm: PrivateKeySigner,
+) -> (u64, String) {
+    match transactions::get_latest_mbsm_revision(client)
         .await
-        .expect("Failed to create an account-based localhost client");
-
-    // Check if the MBSM is already deployed.
-    let latest_revision = transactions::get_latest_mbsm_revision(&client)
-        .await
-        .expect("Get latest MBSM revision");
-    match latest_revision {
-        Some((rev, addr)) => debug!("MBSM is deployed at revision #{rev} at address {addr}"),
+        .expect("Get latest MBSM revision")
+    {
+        Some((rev, addr)) => {
+            debug!("MBSM is deployed at revision #{rev} at address {addr}");
+            (rev, addr.to_string())
+        }
         None => {
             let bytecode_hex = include_str!("../tnt-core/MasterBlueprintServiceManager.hex");
             let mut raw_hex = bytecode_hex.replace("0x", "").replace("\n", "");
-            // fix odd length
             if raw_hex.len() % 2 != 0 {
                 raw_hex = format!("0{}", raw_hex);
             }
             let bytecode = hex::decode(&raw_hex).expect("valid bytecode in hex format");
             let ev = transactions::deploy_new_mbsm_revision(
-                &local_tangle_node_ws,
-                &client,
-                handles[0].sr25519_id(),
-                opts.signer_evm.clone().expect("Signer EVM is set"),
+                local_tangle_node_ws,
+                client,
+                handle.sr25519_id(),
+                signer_evm,
                 &bytecode,
             )
             .await
             .expect("deploy new MBSM revision");
-            let rev = ev.revision;
-            let addr = ev.address;
-            debug!("Deployed MBSM at revision #{rev} at address {addr}");
+            (ev.revision as u64, ev.address.to_string())
         }
-    };
+    }
+}
 
-    // Step 1: Create the blueprint using alice's identity
-    let blueprint_id = match cargo_tangle::deploy::deploy_to_tangle(opts.clone()).await {
-        Ok(id) => id,
-        Err(err) => {
-            error!("Failed to deploy blueprint: {err}");
-            panic!("Failed to deploy blueprint: {err}");
-        }
-    };
-
-    // Step 2: Have each identity register to a blueprint
-    let mut futures_ordered = FuturesOrdered::new();
+/// Register operators to blueprint and approve service
+async fn register_and_approve_operators(
+    client: &TangleClient,
+    handles: Vec<BlueprintManagerHandle>,
+    blueprint_id: u64,
+) -> Vec<BlueprintManagerHandle> {
     let registration_args = RegistrationArgs::new();
-    // TODO: allow the function called to specify the registration args
+    let mut futures_ordered = FuturesOrdered::new();
 
+    // Register operators
     for handle in handles {
         let client = client.clone();
         let registration_args = registration_args.clone();
@@ -237,29 +234,28 @@ pub async fn new_test_ext_blueprint_manager<
         .collect::<Vec<BlueprintManagerHandle>>()
         .await;
 
-    // Step 3: request a service
+    // Request service
     let all_nodes = handles
         .iter()
         .map(|handle| handle.sr25519_id().account_id().clone())
         .collect();
 
-    // Use Alice's account to register the service
     info!("Requesting service for blueprint ID {blueprint_id} using Alice's keys ...");
 
     if let Err(err) =
-        transactions::request_service(&client, handles[0].sr25519_id(), blueprint_id, all_nodes, 0)
+        transactions::request_service(client, handles[0].sr25519_id(), blueprint_id, all_nodes, 0)
             .await
     {
         error!("Failed to register service: {err}");
         panic!("Failed to register service: {err}");
     }
 
-    let next_request_id = transactions::get_next_request_id(&client)
+    let next_request_id = transactions::get_next_request_id(client)
         .await
         .expect("Failed to get next request ID")
         .saturating_sub(1);
 
-    // Step 2: Have each identity register to a blueprint
+    // Approve service
     let mut futures_ordered = FuturesOrdered::new();
 
     for handle in handles {
@@ -280,10 +276,111 @@ pub async fn new_test_ext_blueprint_manager<
         futures_ordered.push_back(task);
     }
 
-    let mut handles = futures_ordered
+    futures_ordered
         .collect::<Vec<BlueprintManagerHandle>>()
-        .await;
+        .await
+}
 
+/// Start blueprint managers and wait for nodes to be online
+async fn start_blueprint_managers(
+    mut handles: Vec<BlueprintManagerHandle>,
+) -> Vec<BlueprintManagerHandle> {
+    for handle in handles.iter_mut() {
+        handle.start().expect("Failed to start blueprint manager");
+    }
+
+    info!("Waiting for all nodes to be online ...");
+    let all_paths = handles
+        .iter()
+        .map(|r| r.keystore_uri().to_string())
+        .map(PathBuf::from)
+        .collect::<Vec<_>>();
+    wait_for_test_ready(all_paths).await;
+    info!("All nodes are online");
+
+    handles
+}
+
+pub async fn new_test_ext_blueprint_manager<
+    const N: usize,
+    const K: usize,
+    D: Send + Clone + 'static,
+    F: Fn(PerTestNodeInput<D>) -> Fut,
+    Fut: SendFuture<'static, BlueprintManagerHandle>,
+>(
+    additional_params: D,
+    opts: Opts,
+    f: F,
+) -> LocalhostTestExt {
+    let span = tracing::info_span!("Integration-Test");
+    let _span = span.enter();
+
+    // Initialize network configuration
+    let bind_addrs = initialize_network_config(N);
+    let multi_addrs = bind_addrs
+        .iter()
+        .map(|(addr, _)| addr.clone())
+        .collect::<Vec<_>>();
+
+    // Initialize handles
+    let (handles, opts) =
+        initialize_handles(&bind_addrs, multi_addrs, additional_params, &opts, f).await;
+
+    let local_tangle_node_ws: Url = opts.ws_rpc_url.clone().parse().unwrap();
+    let local_tangle_node_http: Url = opts.http_rpc_url.clone().parse().unwrap();
+
+    let client = get_client(
+        &local_tangle_node_ws.as_str(),
+        &local_tangle_node_http.as_str(),
+    )
+    .await
+    .expect("Failed to create an account-based localhost client");
+
+    // Deploy or get MBSM
+    let (_rev, _addr) = deploy_or_get_mbsm(
+        &client,
+        &local_tangle_node_ws.as_str(),
+        &handles[0],
+        opts.signer_evm.clone().expect("Signer EVM is set"),
+    )
+    .await;
+
+    // Create blueprint using Alice's identity
+    let blueprint_id = match cargo_tangle::deploy::deploy_to_tangle(opts.clone()).await {
+        Ok(id) => id,
+        Err(err) => {
+            error!("Failed to deploy blueprint: {err}");
+            panic!("Failed to deploy blueprint: {err}");
+        }
+    };
+
+    // // Use the default Tangle Config
+    // let tangle_config = TangleConfig::default();
+    // let keystore = "file::memory:".to_string();
+    //
+    // let config = ContextConfig::create_tangle_config(
+    //     local_tangle_node_http,
+    //     local_tangle_node_ws,
+    //     keystore,
+    //     SupportedChains::LocalTestnet,
+    // );
+    // let gadget_config = gadget_sdk::config::load(config).expect("Failed to load environment");
+    //
+    // for _handle in &handles {
+    //     let mut runner = BlueprintRunner::new(tangle_config.clone(), gadget_config.clone());
+    //
+    //     // TODO: Add any jobs or background services for each handle
+    //     // runner.job(...);
+    //     // runner.background_service(...);
+    //
+    //     tokio::spawn(async move {
+    //         if let Err(e) = runner.run().await {
+    //             error!("Runner error: {:?}", e);
+    //         }
+    //     });
+    // }
+
+    // Get blueprint information
     let now = client
         .blocks()
         .at_latest()
@@ -304,29 +401,16 @@ pub async fn new_test_ext_blueprint_manager<
         .find(|r| r.blueprint_id == blueprint_id)
         .expect("Blueprint not found in operator's blueprints");
 
-    // Now, start every blueprint manager. With the blueprint submitted and every operator registered
-    // to the blueprint, we can now start the blueprint manager, expecting that the blueprint manager
-    // will start the services associated with the blueprint as gadgets.
-    for handle in handles.iter_mut() {
-        handle.start().expect("Failed to start blueprint manager");
-    }
-
-    info!("Waiting for all nodes to be online ...");
-    let all_paths = handles
-        .iter()
-        .map(|r| r.keystore_uri().to_string())
-        .map(PathBuf::from)
-        .collect::<Vec<_>>();
-    wait_for_test_ready(all_paths).await;
-    info!("All nodes are online");
+    // Start blueprint managers and wait for nodes to be online
+    let handles = start_blueprint_managers(handles).await;
 
     drop(_span);
 
     LocalhostTestExt {
         client,
         handles,
-        span,
         blueprint,
+        span,
     }
 }
 

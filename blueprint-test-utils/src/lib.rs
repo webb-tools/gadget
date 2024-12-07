@@ -46,6 +46,8 @@ pub mod symbiotic_test_env;
 pub mod sync;
 pub mod tangle;
 pub mod test_ext;
+mod test_runner;
+
 use anvil::ANVIL_PRIVATE_KEYS;
 pub use gadget_sdk;
 pub use gadget_sdk::ext::blueprint_serde::BoundedVec;

@@ -36,7 +36,7 @@ pub struct GadgetConfiguration<RwLock: lock_api::RawRwLock> {
     pub data_dir: Option<PathBuf>,
     /// The list of bootnodes to connect to
     pub bootnodes: Vec<Multiaddr>,
-    /// The Current Environment is for the `PreRegisteration` of the Gadget
+    /// The Current Environment is for the `PreRegistration` of the Gadget
     ///
     /// The gadget will now start in the Registration mode and will try to register the current operator on that blueprint
     /// There is no Service ID for this mode, since we need to register the operator first on the blueprint.

@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.1](https://github.com/tangle-network/gadget/compare/gadget-context-derive-v0.3.0...gadget-context-derive-v0.3.1) - 2024-12-12
+
+### Other
+
+- Download Tangle binary against specific hash ([#537](https://github.com/tangle-network/gadget/pull/537))
+- Call ID Insertion and Resolution For [#520](https://github.com/tangle-network/gadget/pull/520) ([#533](https://github.com/tangle-network/gadget/pull/533))
+
 ## [0.3.0](https://github.com/tangle-network/gadget/compare/gadget-context-derive-v0.2.2...gadget-context-derive-v0.3.0) - 2024-11-29
 
 ### Added

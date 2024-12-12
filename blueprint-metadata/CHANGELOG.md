@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.1](https://github.com/tangle-network/gadget/compare/blueprint-metadata-v0.2.0...blueprint-metadata-v0.2.1) - 2024-12-12
+
+### Fixed
+
+- *(blueprint-proc-macro)* fix bug where job IDs are not written in order to blueprint.json ([#542](https://github.com/tangle-network/gadget/pull/542))
+
+### Other
+
+- Call ID Insertion and Resolution For [#520](https://github.com/tangle-network/gadget/pull/520) ([#533](https://github.com/tangle-network/gadget/pull/533))
+
 ## [0.2.0](https://github.com/tangle-network/gadget/compare/blueprint-metadata-v0.1.7...blueprint-metadata-v0.2.0) - 2024-11-29
 
 ### Other

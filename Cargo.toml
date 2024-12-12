@@ -45,21 +45,21 @@ broken_intra_doc_links = "deny"
 
 [workspace.dependencies]
 gadget-io = { version = "0.0.5", path = "./gadget-io", default-features = false }
-blueprint-manager = { version = "0.2.1", path = "./blueprint-manager" }
-blueprint-serde = { version = "0.3.0", path = "./blueprint-serde", package = "gadget-blueprint-serde" }
+blueprint-manager = { version = "0.2.2", path = "./blueprint-manager" }
+blueprint-serde = { version = "0.3.1", path = "./blueprint-serde", package = "gadget-blueprint-serde" }
 blueprint-test-utils = { path = "./blueprint-test-utils" }
-gadget-sdk = { path = "./sdk", default-features = false, version = "0.6.1" }
+gadget-sdk = { path = "./sdk", default-features = false, version = "0.6.2" }
 
 incredible-squaring-blueprint = { path = "./blueprints/incredible-squaring", default-features = false, version = "0.1.1" }
 incredible-squaring-blueprint-eigenlayer = { path = "./blueprints/incredible-squaring-eigenlayer", default-features = false, version = "0.1.1" }
 incredible-squaring-blueprint-symbiotic = { path = "./blueprints/incredible-squaring-symbiotic", default-features = false, version = "0.1.1" }
 blueprint-examples = { path = "./blueprints/examples", default-features = false, version = "0.1.1" }
-gadget-blueprint-proc-macro = { path = "./macros/blueprint-proc-macro", default-features = false, version = "0.5.0" }
-gadget-blueprint-proc-macro-core = { path = "./macros/blueprint-proc-macro-core", default-features = false, version = "0.3.0" }
-gadget-context-derive = { path = "./macros/context-derive", default-features = false, version = "0.3.0" }
+gadget-blueprint-proc-macro = { path = "./macros/blueprint-proc-macro", default-features = false, version = "0.5.1" }
+gadget-blueprint-proc-macro-core = { path = "./macros/blueprint-proc-macro-core", default-features = false, version = "0.3.1" }
+gadget-context-derive = { path = "./macros/context-derive", default-features = false, version = "0.3.1" }
 blueprint-build-utils = { path = "./blueprint-build-utils", default-features = false, version = "0.1.0" }
-blueprint-metadata = { path = "./blueprint-metadata", default-features = false, version = "0.2.0" }
-cargo-tangle = { path = "./cli", version = "0.3.2" }
+blueprint-metadata = { path = "./blueprint-metadata", default-features = false, version = "0.2.1" }
+cargo-tangle = { path = "./cli", version = "0.3.3" }
 cargo_metadata = { version = "0.18.1" }
 
 # Tangle-related dependencies

@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.1](https://github.com/tangle-network/gadget/compare/gadget-blueprint-serde-v0.3.0...gadget-blueprint-serde-v0.3.1) - 2024-12-12
+
+### Other
+
+- update Cargo.toml dependencies
+
 ## [0.3.0](https://github.com/tangle-network/gadget/compare/gadget-blueprint-serde-v0.2.0...gadget-blueprint-serde-v0.3.0) - 2024-11-29
 
 ### Fixed

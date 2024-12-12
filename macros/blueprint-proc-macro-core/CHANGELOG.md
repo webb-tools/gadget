@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.1](https://github.com/tangle-network/gadget/compare/gadget-blueprint-proc-macro-core-v0.3.0...gadget-blueprint-proc-macro-core-v0.3.1) - 2024-12-12
+
+### Fixed
+
+- *(blueprint-proc-macro)* fix bug where job IDs are not written in order to blueprint.json ([#542](https://github.com/tangle-network/gadget/pull/542))
+
 ## [0.3.0](https://github.com/tangle-network/gadget/compare/gadget-blueprint-proc-macro-core-v0.2.0...gadget-blueprint-proc-macro-core-v0.3.0) - 2024-11-29
 
 ### Other

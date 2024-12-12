@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.1](https://github.com/tangle-network/gadget/compare/gadget-blueprint-proc-macro-v0.5.0...gadget-blueprint-proc-macro-v0.5.1) - 2024-12-12
+
+### Fixed
+
+- *(blueprint-proc-macro)* fix bug where job IDs are not written in order to blueprint.json ([#542](https://github.com/tangle-network/gadget/pull/542))
+
+### Other
+
+- Download Tangle binary against specific hash ([#537](https://github.com/tangle-network/gadget/pull/537))
+- Call ID Insertion and Resolution For [#520](https://github.com/tangle-network/gadget/pull/520) ([#533](https://github.com/tangle-network/gadget/pull/533))
+
 ## [0.5.0](https://github.com/tangle-network/gadget/compare/gadget-blueprint-proc-macro-v0.4.0...gadget-blueprint-proc-macro-v0.5.0) - 2024-11-29
 
 ### Fixed

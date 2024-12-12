@@ -1,6 +1,6 @@
 [package]
 name = "gadget-blueprint-serde"
-version = "0.3.0"
+version = "0.3.1"
 description = "Tangle Blueprints serde integration"
 authors.workspace = true
 edition.workspace = true

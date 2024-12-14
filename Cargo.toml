@@ -63,29 +63,30 @@ cargo-tangle = { path = "./cli", version = "0.3.3" }
 cargo_metadata = { version = "0.18.1" }
 
 # Tangle-related dependencies
-tangle-subxt = { version = "0.7.1", default-features = false }
+# tangle-subxt = { version = "0.7.1", default-features = false }
+# tangle-subxt = { git = "https://github.com/tangle-network/tangle", branch = "drew/subxt-update", default-features = false }
+tangle-subxt = { path = "../tangle/tangle-subxt", default-features = false }
+tnt-core-bytecode = { git = "https://github.com/tangle-network/tnt-core.git", default-features = false, branch = "donovan/bytecode" }
+
+# Substrate deps
+parity-scale-codec = { version = "3.6.12", default-features = false }
+scale-info = { version = "2.11.3", default-features = false }
 subxt-signer = { version = "0.37.0", default-features = false }
 subxt = { version = "0.37.0", default-features = false }
 subxt-core = { version = "0.37.0", default-features = false }
-round-based = "0.3.0"
-tnt-core-bytecode = { git = "https://github.com/tangle-network/tnt-core.git", default-features = false, branch = "donovan/bytecode" }
-
 sp-core = { version = "31.0.0", default-features = false }
 sp-io = { version = "33.0.0", default-features = false }
 sp-std = { version = "14.0.0", default-features = false }
 sp-runtime = { version = "39.0.0", default-features = false }
-sc-utils = { version = "17.0.0", default-features = false }
 sp-api = { version = "34.0.0", default-features = false }
 sp-application-crypto = { version = "33.0.0", default-features = false }
 sp-keystore = { version = "0.37.0", default-features = false }
 sp-externalities = { version = "0.27.0", default-features = false }
-
 sc-client-api = { version = "37.0.0", default-features = false }
 sc-keystore = { version = "28.0.0", default-features = false }
-parity-scale-codec = { version = "3.6.12", default-features = false }
+sc-utils = { version = "17.0.0", default-features = false }
 
-scale-info = { version = "2.11.3", default-features = false }
-
+round-based = "0.3.0"
 tokio-retry = "0.3.0"
 anyhow = "1.0.93"
 async-trait = "0.1.82"
@@ -94,7 +95,7 @@ backon = { version = "1.2.0", default-features = false }
 bincode = "1.3.3"
 bip39 = "2.1.0"
 bollard = "0.17"
-cargo-generate = { version = "0.21.3", default-features = false }
+cargo-generate = { version = "0.21", default-features = false }
 cfg-if = "1.0.0"
 clap = "4.5.16"
 clap-cargo = "0.14"

@@ -128,7 +128,11 @@ pub fn generate_context_impl(
                     })?;
 
                     if let Some(pref) = maybe_pref {
-                        map.insert(operator, gadget_sdk::subxt_core::ext::sp_core::ecdsa::Public(pref.key));
+                        let pt = k256::EncodedPoint::from_bytes(&pref.key).unwrap();
+                        let compressed_bytes = pt.compress().to_bytes();
+                        map.insert(operator, gadget_sdk::subxt_core::ext::sp_core::ecdsa::Public(
+                            compressed_bytes.to_vec().try_into().unwrap()
+                        ));
                     } else {
                         return Err(gadget_sdk::color_eyre::Report::msg("Missing ECDSA key for operator {operator}"));
                     }

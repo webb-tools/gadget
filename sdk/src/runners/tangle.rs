@@ -1,6 +1,8 @@
 use crate::config::ProtocolSpecificSettings;
 use crate::{config::GadgetConfiguration, runners::RunnerError};
 use crate::{info, tx};
+use k256::ecdsa::{SigningKey, VerifyingKey};
+use k256::EncodedPoint;
 use sp_core::Pair;
 use subxt::tx::Signer;
 use tangle_subxt::tangle_testnet_runtime::api;
@@ -126,11 +128,16 @@ pub async fn register_impl(
     }
 
     let blueprint_id = blueprint_settings.blueprint_id;
+    let secret = SigningKey::from_slice(&ecdsa_pair.signer().seed())
+        .expect("Should be able to create a secret key from a seed");
+    let verifying_key = VerifyingKey::from(secret);
+    let public_key = verifying_key.to_encoded_point(false);
+    let key = public_key.to_bytes().to_vec().try_into().unwrap();
 
     let xt = api::tx().services().register(
         blueprint_id,
         services::OperatorPreferences {
-            key: ecdsa_pair.signer().public().0,
+            key,
             price_targets: price_targets.clone().0,
         },
         registration_args,

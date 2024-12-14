@@ -174,10 +174,6 @@ pub(crate) async fn handle_tangle_event(
 ) -> color_eyre::Result<()> {
     info!("Received notification {}", event.number);
     const DEFAULT_PROTOCOL: Protocol = Protocol::Tangle;
-    warn!("Using Tangle protocol as default over Eigen. This is a temporary development workaround. You can alter this behavior here");
-
-    // const DEFAULT_PROTOCOL: Protocol = Protocol::Eigenlayer;
-    // warn!("Using Eigen protocol as default over Tangle. This is a temporary development workaround. You can alter this behavior here");
 
     let mut registration_blueprints = vec![];
     // First, check to see if we need to register any new services invoked by the PreRegistration event

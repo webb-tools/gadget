@@ -31,9 +31,8 @@ pub async fn deploy_new_mbsm_revision(
     signer_evm: PrivateKeySigner,
     bytecode: &[u8],
 ) -> Result<MasterBlueprintServiceManagerRevised, Box<dyn Error>> {
-    info!("Deploying new MBSM revision ...");
-
     let wallet = alloy_provider::network::EthereumWallet::from(signer_evm);
+
     let provider = alloy_provider::ProviderBuilder::new()
         .with_recommended_fillers()
         .wallet(wallet)
@@ -41,45 +40,47 @@ pub async fn deploy_new_mbsm_revision(
         .await?;
 
     let tx = alloy_rpc_types::TransactionRequest::default().with_deploy_code(bytecode.to_vec());
+
     let send_result = provider.send_transaction(tx).await;
+
     let tx = match send_result {
         Ok(tx) => tx,
-        Err(err) => {
-            error!("Failed to send transaction: {err}");
+        Err(_) => {
             return Err("Failed to deploy MBSM Contract".into());
         }
     };
-    // Deploy the contract.
+
     let tx_result = tx.get_receipt().await;
     let receipt = match tx_result {
         Ok(receipt) => receipt,
-        Err(err) => {
-            error!("Failed to deploy MBSM Contract: {err}");
+        Err(_) => {
             return Err("Failed to deploy MBSM Contract".into());
         }
     };
-    // Check the receipt status.
+
     let mbsm_address = if receipt.status() {
         ReceiptResponse::contract_address(&receipt).unwrap()
     } else {
-        error!("MBSM Contract deployment failed!");
-        error!("Receipt: {receipt:#?}");
         return Err("MBSM Contract deployment failed!".into());
     };
-    info!("MBSM Contract deployed at: {mbsm_address}");
+
     let sudo_call = api::tx().sudo().sudo(RuntimeCall::Services(
         Call::update_master_blueprint_service_manager {
             address: mbsm_address.0 .0.into(),
         },
     ));
+
     let res = client
         .tx()
         .sign_and_submit_then_watch_default(&sudo_call, account_id)
         .await?;
+
     let evts = wait_for_in_block_success(res).await?;
+
     let ev = evts
         .find_first::<MasterBlueprintServiceManagerRevised>()?
         .expect("MBSM Revised Event to be emitted");
+
     Ok(ev)
 }
 
@@ -175,6 +176,7 @@ pub async fn request_service(
     value: u128,
 ) -> Result<(), Box<dyn Error>> {
     let call = api::tx().services().request(
+        None,
         blueprint_id,
         test_nodes.clone(),
         test_nodes,

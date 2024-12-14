@@ -29,6 +29,7 @@ alloy-provider = { workspace = true }
 alloy-transport = { workspace = true }
 round-based = { workspace = true }
 serde = { workspace = true }
+k256 = { workspace = true }
 
 [features]
 default = ["std"]

@@ -21,6 +21,7 @@ use blueprint_manager::executor::BlueprintManagerHandle;
 use blueprint_manager::sdk::entry::SendFuture;
 use cargo_tangle::deploy::Opts;
 use gadget_sdk::clients::tangle::runtime::TangleClient;
+use gadget_sdk::k256::ecdsa::{SigningKey, VerifyingKey};
 use gadget_sdk::tangle_subxt::tangle_testnet_runtime::api;
 use gadget_sdk::tangle_subxt::tangle_testnet_runtime::api::runtime_types::tangle_primitives::services::PriceTargets;
 use gadget_sdk::tangle_subxt::tangle_testnet_runtime::api::services::calls::types::register::{Preferences, RegistrationArgs};
@@ -221,8 +222,12 @@ pub async fn new_test_ext_blueprint_manager<
 
         let task = async move {
             let keypair = handle.sr25519_id().clone();
-            let key = handle.ecdsa_id().signer().public().0;
-
+            let ecdsa_key = handle.ecdsa_id().signer();
+            let secret = SigningKey::from_slice(&ecdsa_key.seed())
+                .expect("Should be able to create a secret key from a seed");
+            let verifying_key = VerifyingKey::from(secret);
+            let public_key = verifying_key.to_encoded_point(false);
+            let key = public_key.to_bytes().to_vec().try_into().unwrap();
             let preferences = Preferences {
                 key,
                 price_targets: PriceTargets {

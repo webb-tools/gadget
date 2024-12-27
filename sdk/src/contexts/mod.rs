@@ -66,6 +66,5 @@ create_module_derive!(eigenlayer);
 create_module_derive!(evm_provider);
 create_module_derive!(gossip_network);
 create_module_derive!(keystore);
-create_module_derive!(mpc);
 create_module_derive!(services);
 create_module_derive!(tangle_client);

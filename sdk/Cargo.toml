@@ -30,6 +30,8 @@ url = { workspace = true, features = ["serde"] }
 uuid = { workspace = true }
 failure = { workspace = true }
 num-bigint = { workspace = true }
+indexmap = { workspace = true }
+
 # Keystore deps
 ed25519-zebra = { workspace = true }
 k256 = { workspace = true, features = ["ecdsa", "ecdsa-core", "arithmetic"] }

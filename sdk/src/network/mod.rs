@@ -526,11 +526,13 @@ pub fn serialize(object: &impl Serialize) -> Result<Vec<u8>, serde_json::Error> 
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::logging::setup_log;
     use futures::{stream, StreamExt};
     use gossip::GossipHandle;
     use serde::{Deserialize, Serialize};
     use sp_core::Pair;
     use std::collections::BTreeMap;
+    use std::future::Future;
 
     const TOPIC: &str = "/gadget/test/1.0.0";
 
@@ -563,24 +565,6 @@ mod tests {
     }
 
     const NODE_COUNT: u16 = 10;
-
-    pub fn setup_log() {
-        use tracing_subscriber::util::SubscriberInitExt;
-        let env_filter = tracing_subscriber::EnvFilter::from_default_env()
-            .add_directive("tokio=off".parse().unwrap())
-            .add_directive("hyper=off".parse().unwrap())
-            .add_directive("gadget=debug".parse().unwrap());
-
-        let _ = tracing_subscriber::fmt::SubscriberBuilder::default()
-            .compact()
-            .without_time()
-            .with_span_events(tracing_subscriber::fmt::format::FmtSpan::NONE)
-            .with_target(false)
-            .with_env_filter(env_filter)
-            .with_test_writer()
-            .finish()
-            .try_init();
-    }
 
     async fn wait_for_nodes_connected(nodes: &[GossipHandle]) {
         let node_count = nodes.len();
@@ -949,82 +933,108 @@ mod tests {
         tokio::try_join!(handle0, handle1).unwrap();
     }
 
-    #[tokio::test(flavor = "multi_thread")]
-    async fn test_nested_multiplexer() {
-        setup_log();
-        crate::info!("Starting test_nested_multiplexer");
+    async fn get_networks() -> (GossipHandle, GossipHandle) {
         let network0 = node();
         let network1 = node();
 
         let mut networks = vec![network0, network1];
 
         wait_for_nodes_connected(&networks).await;
+        (networks.remove(0), networks.remove(0))
+    }
 
-        let (network0, network1) = (networks.remove(0), networks.remove(0));
+    #[tokio::test(flavor = "multi_thread")]
+    async fn test_nested_multiplexer_no_delay() {
+        setup_log();
+        crate::info!("Starting test_nested_multiplexer");
+        let (network0, network1) = get_networks().await;
+        nested_multiplex(0, 10, network0, network1, false).await;
+    }
 
-        async fn nested_multiplex<N: Network>(
-            cur_depth: usize,
-            max_depth: usize,
-            network0: N,
-            network1: N,
-        ) {
-            crate::info!("At nested depth = {cur_depth}/{max_depth}");
+    #[tokio::test(flavor = "multi_thread")]
+    /// This test more accurately emulates real use cases since
+    /// nodes will join at different and nondeterministic times.
+    /// This test should thus cover the enqueuing capacity of the multiplexer.
+    async fn test_nested_multiplexer_staggered_start() {
+        setup_log();
+        crate::info!("Starting test_nested_multiplexer");
+        let (network0, network1) = get_networks().await;
+        nested_multiplex(0, 10, network0, network1, true).await;
+    }
 
-            if cur_depth == max_depth {
-                return;
-            }
+    async fn nested_multiplex<N: Network>(
+        cur_depth: usize,
+        max_depth: usize,
+        network0: N,
+        network1: N,
+        rand_init_delay: bool,
+    ) {
+        crate::info!("At nested depth = {cur_depth}/{max_depth}");
 
-            let multiplexer0 = NetworkMultiplexer::new(network0);
-            let multiplexer1 = NetworkMultiplexer::new(network1);
-
-            let stream_key = StreamKey {
-                task_hash: sha2_256(&[(cur_depth % 255) as u8]),
-                round_id: 0,
-            };
-
-            let subnetwork0 = multiplexer0.multiplex(stream_key);
-            let subnetwork1 = multiplexer1.multiplex(stream_key);
-
-            // Send a message in the subnetwork0 to subnetwork1 and vice versa, assert values of message
-            let payload = vec![1, 2, 3];
-            let msg = GossipHandle::build_protocol_message(
-                IdentifierInfo::default(),
-                0,
-                Some(1),
-                &payload,
-                None,
-                None,
-            );
-
-            subnetwork0.send(msg.clone()).unwrap();
-
-            let received_msg = subnetwork1.recv().await.unwrap();
-            assert_eq!(received_msg.payload, msg.payload);
-
-            let msg = GossipHandle::build_protocol_message(
-                IdentifierInfo::default(),
-                1,
-                Some(0),
-                &payload,
-                None,
-                None,
-            );
-
-            subnetwork1.send(msg.clone()).unwrap();
-
-            let received_msg = subnetwork0.recv().await.unwrap();
-            assert_eq!(received_msg.payload, msg.payload);
-            tracing::info!("Done nested depth = {cur_depth}/{max_depth}");
-
-            Box::pin(nested_multiplex(
-                cur_depth + 1,
-                max_depth,
-                subnetwork0,
-                subnetwork1,
-            ))
-            .await
+        if cur_depth == max_depth {
+            return;
         }
 
-        nested_multiplex(0, 10, network0, network1).await;
+        let stream_key = StreamKey {
+            task_hash: sha2_256(&[(cur_depth % 255) as u8]),
+            round_id: 0,
+        };
+
+        let initial_delay_0 = if cur_depth % 2 == 0 && rand_init_delay {
+            rand::random::<u64>() % 100
+        } else {
+            0
+        };
+
+        let initial_delay_1 = if cur_depth % 2 != 0 && rand_init_delay {
+            rand::random::<u64>()
+        } else {
+            0
+        };
+
+        let task_gen =
+            |network, i, i_peer, rand_delay| -> Pin<Box<dyn Future<Output = SubNetwork>>> {
+                Box::pin(async move {
+                    crate::info!("Peer {i} at layer {cur_depth}/{max_depth}");
+                    if rand_delay != 0 {
+                        tokio::time::sleep(tokio::time::Duration::from_millis(rand_delay)).await;
+                    }
+
+                    let multiplexer = NetworkMultiplexer::new(network);
+                    let subnetwork = multiplexer.multiplex(stream_key);
+
+                    // Send a message in the subnetwork0 to subnetwork1 and vice versa, assert values of message
+                    let payload = vec![1, 2, 3];
+                    let msg = GossipHandle::build_protocol_message(
+                        IdentifierInfo::default(),
+                        i,
+                        Some(i_peer),
+                        &payload,
+                        None,
+                        None,
+                    );
+
+                    subnetwork.send(msg.clone()).unwrap();
+                    let received_msg = subnetwork.recv().await.unwrap();
+                    assert_eq!(received_msg.payload, msg.payload);
+                    subnetwork
+                })
+            };
+
+        let task_0 = task_gen(network0, 0, 1, initial_delay_0);
+        let task_1 = task_gen(network1, 1, 0, initial_delay_1);
+
+        let (subnetwork0, subnetwork1) = tokio::join!(task_0, task_1);
+
+        crate::info!("Done nested depth = {cur_depth}/{max_depth}");
+
+        Box::pin(nested_multiplex(
+            cur_depth + 1,
+            max_depth,
+            subnetwork0,
+            subnetwork1,
+            rand_init_delay,
+        ))
+        .await
     }
 }

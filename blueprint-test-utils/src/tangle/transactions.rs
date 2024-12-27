@@ -217,7 +217,7 @@ pub async fn wait_for_completion_of_tangle_job(
     while let Some(Ok(block)) = blocks.next().await {
         let events = block.events().await?;
         let results = events.find::<JobResultSubmitted>().collect::<Vec<_>>();
-        info!(
+        gadget_sdk::debug!(
             %service_id,
             %call_id,
             %required_count,

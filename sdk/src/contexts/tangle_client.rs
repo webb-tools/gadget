@@ -1,12 +1,13 @@
-use std::future::Future;
+use async_trait::async_trait;
 
 /// `TangleClientContext` trait provides access to the Tangle client from the context.
+#[async_trait]
 pub trait TangleClientContext {
     type Config: subxt::Config;
     /// Get the Tangle client from the context.
-    fn tangle_client(
+    async fn tangle_client(
         &self,
-    ) -> impl Future<Output = color_eyre::Result<subxt::OnlineClient<Self::Config>, subxt::Error>>;
+    ) -> color_eyre::Result<subxt::OnlineClient<Self::Config>, subxt::Error>;
 
     fn get_call_id(&mut self) -> &mut Option<u64>;
 

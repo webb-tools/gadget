@@ -5,7 +5,7 @@ use gadget_sdk::contexts::{
 
 #[derive(KeystoreContext, EVMProviderContext, TangleClientContext, ServicesContext)]
 #[allow(dead_code)]
-struct MyContext<T, U> {
+struct MyContext<T: Send + Sync, U: Send + Sync> {
     foo: T,
     bar: U,
     #[config]

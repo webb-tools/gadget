@@ -172,9 +172,9 @@ pub(crate) async fn handle_tangle_event(
     poll_result: EventPollResult,
     client: &ServicesClient<TangleConfig>,
 ) -> color_eyre::Result<()> {
-    info!("Received notification {}", event.number);
+    trace!("Received notification {}", event.number);
     const DEFAULT_PROTOCOL: Protocol = Protocol::Tangle;
-    warn!("Using Tangle protocol as default over Eigen. This is a temporary development workaround. You can alter this behavior here");
+    trace!("[WARNING] Using Tangle protocol as default over Eigen. This is a temporary development workaround. You can alter this behavior here");
 
     // const DEFAULT_PROTOCOL: Protocol = Protocol::Eigenlayer;
     // warn!("Using Eigen protocol as default over Tangle. This is a temporary development workaround. You can alter this behavior here");
@@ -321,7 +321,7 @@ pub(crate) async fn handle_tangle_event(
     // Loop through every (blueprint_id, service_id) running. See if the service is still on-chain. If not, kill it and add it to to_remove
     for (blueprint_id, process_handles) in &mut *active_gadgets {
         for service_id in process_handles.keys() {
-            info!(
+            trace!(
                 "Checking service for on-chain termination: bid={blueprint_id}//sid={service_id}"
             );
 

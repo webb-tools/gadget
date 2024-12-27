@@ -5004,6 +5004,7 @@ dependencies = [
  "http-body-util",
  "hyper 1.5.1",
  "hyper-util",
+ "indexmap 2.7.0",
  "itertools 0.13.0",
  "k256",
  "lazy_static",
